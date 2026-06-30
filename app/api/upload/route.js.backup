@@ -1,0 +1,24 @@
+import { fail, ok } from "../_lib/response";
+import { uploadSchema } from "@/lib/validators/upload";
+import { uploadBase64Asset } from "@/lib/services/upload.service";
+import { z } from "zod";
+
+export async function POST(request) {
+    try {
+        const body = await request.json();
+        const data = uploadSchema.parse(body);
+        const uploaded = await uploadBase64Asset(data);
+        return ok(uploaded, { status: 201 });
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            return fail("Invalid upload payload", 400, error.flatten());
+        }
+
+        if (error instanceof Error && error.message === "Cloudinary is not configured") {
+            return fail("Upload storage is not configured", 501);
+        }
+
+        return fail("Failed to upload asset", 500);
+    }
+}
+

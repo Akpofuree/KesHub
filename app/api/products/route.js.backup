@@ -1,0 +1,27 @@
+import { fail, ok } from "../_lib/response";
+import { createProduct, listProducts } from "@/lib/services/product.service";
+import { productCreateSchema } from "@/lib/validators/product";
+import { z } from "zod";
+
+export async function GET() {
+    try {
+        const products = await listProducts();
+        return ok(products);
+    } catch {
+        return fail("Failed to load products", 500);
+    }
+}
+
+export async function POST(request) {
+    try {
+        const body = await request.json();
+        const data = productCreateSchema.parse(body);
+        const product = await createProduct(data);
+        return ok(product, { status: 201 });
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            return fail("Invalid product payload", 400, error.flatten());
+        }
+        return fail("Failed to create product", 500);
+    }
+}

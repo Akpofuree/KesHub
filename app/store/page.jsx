@@ -1,10 +1,11 @@
 'use client'
-import { dummyStoreDashboardData } from "@/assets/assets"
 import Loading from "@/components/Loading"
 import { CircleDollarSignIcon, ShoppingBasketIcon, StarIcon, TagsIcon } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { fetchJson } from "@/lib/fetch-json"
 
 export default function Dashboard() {
 
@@ -19,6 +20,7 @@ export default function Dashboard() {
         totalOrders: 0,
         ratings: [],
     })
+    const [error, setError] = useState("")
 
     const dashboardCardsData = [
         { title: 'Total Products', value: dashboardData.totalProducts, icon: ShoppingBasketIcon },
@@ -28,7 +30,20 @@ export default function Dashboard() {
     ]
 
     const fetchDashboardData = async () => {
-        setDashboardData(dummyStoreDashboardData)
+        const storesResponse = await fetchJson("/api/stores")
+        if (!storesResponse.ok) {
+            setError(storesResponse.data?.message || "Failed to load store dashboard")
+            setLoading(false)
+            return
+        }
+        const storeId = storesResponse.data?.data?.[0]?.id
+        const response = await fetchJson(`/api/dashboard/store${storeId ? `?storeId=${storeId}` : ""}`)
+        if (!response.ok) {
+            setError(response.data?.message || "Failed to load store dashboard")
+            setLoading(false)
+            return
+        }
+        setDashboardData(response.data?.data || dashboardData)
         setLoading(false)
     }
 
@@ -40,7 +55,20 @@ export default function Dashboard() {
 
     return (
         <div className=" text-slate-500 mb-28">
+            {error && <div className="mb-4 rounded bg-red-50 text-red-700 px-4 py-3 text-sm">{error}</div>}
             <h1 className="text-2xl">Seller <span className="text-slate-800 font-medium">Dashboard</span></h1>
+
+            <div className="mt-5 flex flex-wrap gap-3">
+                <Link href="/store/add-product" className="rounded-full bg-slate-800 px-5 py-2 text-sm text-white hover:bg-slate-900 transition">
+                    Add inventory
+                </Link>
+                <Link href="/store/manage-product" className="rounded-full border border-slate-300 px-5 py-2 text-sm text-slate-700 hover:bg-slate-100 transition">
+                    Edit or remove inventory
+                </Link>
+                <Link href="/swap-device" className="rounded-full border border-indigo-200 px-5 py-2 text-sm text-indigo-700 hover:bg-indigo-50 transition">
+                    Open swap tool
+                </Link>
+            </div>
 
             <div className="flex flex-wrap gap-5 my-10 mt-4">
                 {
