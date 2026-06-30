@@ -1,0 +1,342 @@
+import { prisma } from "../lib/prisma.js";
+import { hash } from "bcryptjs";
+
+const now = new Date();
+
+// Product data with real Unsplash images per category
+const productDummyData = [
+  {
+    id: "prod_1",
+    name: "Modern table lamp",
+    description:
+      "Modern table lamp with a sleek design. It's perfect for any room. It's made of high-quality materials and comes with a lifetime warranty.",
+    mrp: 40,
+    price: 29,
+    images: JSON.stringify([
+      "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600&q=80",
+      "https://images.unsplash.com/photo-1513506003901-1e6a35086a57?w=600&q=80",
+    ]),
+    category: "Decoration",
+    inStock: true,
+  },
+  {
+    id: "prod_2",
+    name: "Smart speaker gray",
+    description:
+      "Smart speaker with a sleek design. It's perfect for any room. It's made of high-quality materials and comes with a lifetime warranty.",
+    mrp: 50,
+    price: 29,
+    images: JSON.stringify([
+      "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=600&q=80",
+      "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80",
+    ]),
+    category: "Speakers",
+    inStock: true,
+  },
+  {
+    id: "prod_3",
+    name: "Smart watch white",
+    description:
+      "Smart watch with a sleek design. It's perfect for any room. It's made of high-quality materials and comes with a lifetime warranty.",
+    mrp: 60,
+    price: 29,
+    images: JSON.stringify([
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80",
+      "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=600&q=80",
+    ]),
+    category: "Watch",
+    inStock: true,
+  },
+  {
+    id: "prod_4",
+    name: "Wireless headphones",
+    description:
+      "Wireless headphones with a sleek design. It's perfect for any room. It's made of high-quality materials and comes with a lifetime warranty.",
+    mrp: 70,
+    price: 29,
+    images: JSON.stringify([
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&q=80",
+      "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600&q=80",
+    ]),
+    category: "Headphones",
+    inStock: true,
+  },
+  {
+    id: "prod_5",
+    name: "Smart watch black",
+    description:
+      "Smart watch with a sleek design. It's perfect for any room. It's made of high-quality materials and comes with a lifetime warranty.",
+    mrp: 49,
+    price: 29,
+    images: JSON.stringify([
+      "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=600&q=80",
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80",
+    ]),
+    category: "Watch",
+    inStock: true,
+  },
+  {
+    id: "prod_6",
+    name: "Security Camera",
+    description:
+      "Security Camera with a sleek design. It's perfect for any room. It's made of high-quality materials and comes with a lifetime warranty.",
+    mrp: 59,
+    price: 29,
+    images: JSON.stringify([
+      "https://images.unsplash.com/photo-1558002038-1055907df827?w=600&q=80",
+      "https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=600&q=80",
+    ]),
+    category: "Camera",
+    inStock: true,
+  },
+  {
+    id: "prod_7",
+    name: "Smart Pen for iPad",
+    description:
+      "Smart Pen for iPad with a sleek design. It's perfect for any room. It's made of high-quality materials and comes with a lifetime warranty.",
+    mrp: 89,
+    price: 29,
+    images: JSON.stringify([
+      "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600&q=80",
+      "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&q=80",
+    ]),
+    category: "Pen",
+    inStock: true,
+  },
+  {
+    id: "prod_8",
+    name: "Home Theater",
+    description:
+      "Home Theater with a sleek design. It's perfect for any room. It's made of high-quality materials and comes with a lifetime warranty.",
+    mrp: 99,
+    price: 29,
+    images: JSON.stringify([
+      "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=600&q=80",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
+    ]),
+    category: "Theater",
+    inStock: true,
+  },
+  {
+    id: "prod_9",
+    name: "Apple Wireless Earbuds",
+    description:
+      "Apple Wireless Earbuds with a sleek design. It's perfect for any room. It's made of high-quality materials and comes with a lifetime warranty.",
+    mrp: 89,
+    price: 29,
+    images: JSON.stringify([
+      "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&q=80",
+      "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600&q=80",
+    ]),
+    category: "Earbuds",
+    inStock: true,
+  },
+  {
+    id: "prod_10",
+    name: "Apple Smart Watch",
+    description:
+      "Apple Smart Watch with a sleek design. It's perfect for any room. It's made of high-quality materials and comes with a lifetime warranty.",
+    mrp: 179,
+    price: 29,
+    images: JSON.stringify([
+      "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=600&q=80",
+      "https://images.unsplash.com/photo-1551816230-ef5deaed4a26?w=600&q=80",
+    ]),
+    category: "Watch",
+    inStock: true,
+  },
+  {
+    id: "prod_11",
+    name: "RGB Gaming Mouse",
+    description:
+      "RGB Gaming Mouse with a sleek design. It's perfect for any room. It's made of high-quality materials and comes with a lifetime warranty.",
+    mrp: 39,
+    price: 29,
+    images: JSON.stringify([
+      "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=600&q=80",
+      "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=600&q=80",
+    ]),
+    category: "Mouse",
+    inStock: true,
+  },
+  {
+    id: "prod_12",
+    name: "Smart Home Cleaner",
+    description:
+      "Smart Home Cleaner with a sleek design. It's perfect for any room. It's made of high-quality materials and comes with a lifetime warranty.",
+    mrp: 199,
+    price: 29,
+    images: JSON.stringify([
+      "https://images.unsplash.com/photo-1558317374-067fb5f30001?w=600&q=80",
+      "https://images.unsplash.com/photo-1603251579711-4b3cb3bb4b2b?w=600&q=80",
+    ]),
+    category: "Cleaner",
+    inStock: true,
+  },
+];
+
+async function main() {
+  const password = await hash("password123", 10);
+
+  const buyer = await prisma.user.upsert({
+    where: { email: "buyer@gocart.local" },
+    update: {},
+    create: {
+      id: "user_buyer_1",
+      name: "Buyer One",
+      email: "buyer@gocart.local",
+      image: "https://placehold.co/128x128",
+      role: "BUYER",
+      password,
+    },
+  });
+
+  const seller = await prisma.user.upsert({
+    where: { email: "seller@gocart.local" },
+    update: {},
+    create: {
+      id: "user_seller_1",
+      name: "Seller One",
+      email: "seller@gocart.local",
+      image: "https://placehold.co/128x128",
+      role: "SELLER",
+      password,
+    },
+  });
+
+  const admin = await prisma.user.upsert({
+    where: { email: "admin@gocart.local" },
+    update: {},
+    create: {
+      id: "user_admin_1",
+      name: "Admin One",
+      email: "admin@gocart.local",
+      image: "https://placehold.co/128x128",
+      role: "ADMIN",
+      password,
+    },
+  });
+
+  const store = await prisma.store.upsert({
+    where: { username: "happyshop" },
+    update: {},
+    create: {
+      userId: seller.id,
+      name: "Happy Shop",
+      description: "Seeded demo store for GoCart",
+      username: "happyshop",
+      address: "123 Demo Street",
+      status: "approved",
+      isActive: true,
+      logo: "https://placehold.co/256x256",
+      email: "seller@gocart.local",
+      contact: "+2340000000000",
+    },
+  });
+
+  // Seed all products from dummy data
+  for (const product of productDummyData) {
+    await prisma.product.upsert({
+      where: { id: product.id },
+      update: {
+        images: product.images,
+      },
+      create: {
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        mrp: product.mrp,
+        price: product.price,
+        images: product.images,
+        category: product.category,
+        storeId: store.id,
+        inStock: product.inStock,
+      },
+    });
+  }
+
+  const address = await prisma.address.upsert({
+    where: { id: "addr_seed_1" },
+    update: {},
+    create: {
+      id: "addr_seed_1",
+      userId: buyer.id,
+      name: "Buyer One",
+      email: "buyer@gocart.local",
+      street: "123 Demo Street",
+      city: "Lagos",
+      state: "LA",
+      zip: "100001",
+      country: "Nigeria",
+      phone: "+2340000000001",
+    },
+  });
+
+  await prisma.coupon.upsert({
+    where: { code: "SEED10" },
+    update: {},
+    create: {
+      code: "SEED10",
+      description: "10% seed coupon",
+      discount: 10,
+      forNewUser: true,
+      forMember: false,
+      isPublic: true,
+      expiresAt: new Date(now.getFullYear() + 1, now.getMonth(), now.getDate()),
+    },
+  });
+
+  await prisma.order.upsert({
+    where: { id: "order_seed_1" },
+    update: {},
+    create: {
+      id: "order_seed_1",
+      total: 75,
+      userId: buyer.id,
+      storeId: store.id,
+      addressId: address.id,
+      isPaid: true,
+      paymentMethod: "COD",
+      isCouponUsed: true,
+      coupon: JSON.stringify({ code: "SEED10", discount: 10 }),
+      orderItems: {
+        create: [
+          {
+            productId: "prod_1",
+            quantity: 1,
+            price: 29,
+          },
+        ],
+      },
+    },
+  });
+
+  await prisma.rating.upsert({
+    where: {
+      userId_productId_orderId: {
+        userId: buyer.id,
+        productId: "prod_1",
+        orderId: "order_seed_1",
+      },
+    },
+    update: {},
+    create: {
+      rating: 5,
+      review: "Great seeded product.",
+      userId: buyer.id,
+      productId: "prod_1",
+      orderId: "order_seed_1",
+    },
+  });
+
+  console.log("Seed completed");
+}
+
+main()
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

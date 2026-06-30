@@ -1,24 +1,44 @@
 'use client'
 import { useEffect, useState } from "react"
 import Loading from "@/components/Loading"
-import { orderDummyData } from "@/assets/assets"
+import toast from "react-hot-toast"
+import { fetchJson } from "@/lib/fetch-json"
 
 export default function StoreOrders() {
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(true)
     const [selectedOrder, setSelectedOrder] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [error, setError] = useState("")
 
 
     const fetchOrders = async () => {
-       setOrders(orderDummyData)
+       const storesResponse = await fetchJson("/api/stores")
+       if (!storesResponse.ok) {
+           setError(storesResponse.data?.message || "Failed to load orders")
+           setLoading(false)
+           return
+       }
+       const storeId = storesResponse.data?.data?.[0]?.id
+       const response = await fetchJson(`/api/orders/store${storeId ? `?storeId=${storeId}` : ""}`)
+       if (!response.ok) {
+           setError(response.data?.message || "Failed to load orders")
+           setLoading(false)
+           return
+       }
+       setOrders(response.data?.data || [])
        setLoading(false)
     }
 
     const updateOrderStatus = async (orderId, status) => {
-        // Logic to update the status of an order
-
-
+        const response = await fetch("/api/orders/store", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orderId, status }),
+        })
+        const result = await response.json()
+        if (!response.ok) throw new Error(result.message || "Failed to update order")
+        setOrders((prev) => prev.map((order) => order.id === orderId ? result.data : order))
     }
 
     const openModal = (order) => {
@@ -39,6 +59,7 @@ export default function StoreOrders() {
 
     return (
         <>
+            {error && <div className="mb-4 rounded bg-red-50 text-red-700 px-4 py-3 text-sm">{error}</div>}
             <h1 className="text-2xl text-slate-500 mb-5">Store <span className="text-slate-800 font-medium">Orders</span></h1>
             {orders.length === 0 ? (
                 <p>No orders found</p>

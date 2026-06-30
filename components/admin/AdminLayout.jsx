@@ -5,22 +5,27 @@ import Link from "next/link"
 import { ArrowRightIcon } from "lucide-react"
 import AdminNavbar from "./AdminNavbar"
 import AdminSidebar from "./AdminSidebar"
+import { useUser } from "@clerk/nextjs"
 
 const AdminLayout = ({ children }) => {
 
+    const { isLoaded, user } = useUser()
     const [isAdmin, setIsAdmin] = useState(false)
     const [loading, setLoading] = useState(true)
 
     const fetchIsAdmin = async () => {
-        setIsAdmin(true)
+        const role = user?.unsafeMetadata?.role
+        setIsAdmin(role === 'ADMIN')
         setLoading(false)
     }
 
     useEffect(() => {
-        fetchIsAdmin()
-    }, [])
+        if (isLoaded) {
+            fetchIsAdmin()
+        }
+    }, [isLoaded, user])
 
-    return loading ? (
+    return loading || !isLoaded ? (
         <Loading />
     ) : isAdmin ? (
         <div className="flex flex-col h-screen">

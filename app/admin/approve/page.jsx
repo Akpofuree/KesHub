@@ -1,25 +1,37 @@
 'use client'
-import { storesDummyData } from "@/assets/assets"
 import StoreInfo from "@/components/admin/StoreInfo"
 import Loading from "@/components/Loading"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
+import { fetchJson } from "@/lib/fetch-json"
 
 export default function AdminApprove() {
 
     const [stores, setStores] = useState([])
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState("")
 
 
     const fetchStores = async () => {
-        setStores(storesDummyData)
+        const response = await fetchJson("/api/stores")
+        if (!response.ok) {
+            setError(response.data?.message || "Failed to load store requests")
+            setLoading(false)
+            return
+        }
+        setStores((response.data?.data || []).filter((store) => store.status === "pending"))
         setLoading(false)
     }
 
     const handleApprove = async ({ storeId, status }) => {
-        // Logic to approve a store
-
-
+        const response = await fetch("/api/stores/approve", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ storeId, status }),
+        })
+        const result = await response.json()
+        if (!response.ok) throw new Error(result.message || "Failed to update store")
+        setStores((prev) => prev.filter((store) => store.id !== storeId))
     }
 
     useEffect(() => {
@@ -28,6 +40,7 @@ export default function AdminApprove() {
 
     return !loading ? (
         <div className="text-slate-500 mb-28">
+            {error && <div className="mb-4 rounded bg-red-50 text-red-700 px-4 py-3 text-sm">{error}</div>}
             <h1 className="text-2xl">Approve <span className="text-slate-800 font-medium">Stores</span></h1>
 
             {stores.length ? (

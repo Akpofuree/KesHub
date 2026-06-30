@@ -3,11 +3,12 @@ import { useEffect, useState } from "react"
 import { format } from "date-fns"
 import toast from "react-hot-toast"
 import { DeleteIcon } from "lucide-react"
-import { couponDummyData } from "@/assets/assets"
+import { fetchJson } from "@/lib/fetch-json"
 
 export default function AdminCoupons() {
 
     const [coupons, setCoupons] = useState([])
+    const [error, setError] = useState("")
 
     const [newCoupon, setNewCoupon] = useState({
         code: '',
@@ -20,24 +21,51 @@ export default function AdminCoupons() {
     })
 
     const fetchCoupons = async () => {
-        setCoupons(couponDummyData)
+        const response = await fetchJson("/api/coupons")
+        if (!response.ok) {
+            setError(response.data?.message || "Failed to load coupons")
+            return
+        }
+        setCoupons(response.data?.data || [])
     }
 
     const handleAddCoupon = async (e) => {
         e.preventDefault()
-        // Logic to add a coupon
-
+        const response = await fetch("/api/coupons", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newCoupon),
+        })
+        const result = await response.json()
+        if (!response.ok) throw new Error(result.message || "Failed to create coupon")
+        setCoupons((prev) => [result.data, ...prev])
+        setNewCoupon({
+            code: '',
+            description: '',
+            discount: '',
+            forNewUser: false,
+            forMember: false,
+            isPublic: false,
+            expiresAt: new Date()
+        })
 
     }
 
     const handleChange = (e) => {
-        setNewCoupon({ ...newCoupon, [e.target.name]: e.target.value })
+        const { name, value } = e.target
+        setNewCoupon({
+            ...newCoupon,
+            [name]: name === "expiresAt" ? new Date(value) : value,
+        })
     }
 
     const deleteCoupon = async (code) => {
-        // Logic to delete a coupon
-
-
+        const response = await fetch(`/api/coupons?code=${encodeURIComponent(code)}`, {
+            method: "DELETE",
+        })
+        const result = await response.json()
+        if (!response.ok) throw new Error(result.message || "Failed to delete coupon")
+        setCoupons((prev) => prev.filter((coupon) => coupon.code !== code))
     }
 
     useEffect(() => {
@@ -46,6 +74,7 @@ export default function AdminCoupons() {
 
     return (
         <div className="text-slate-500 mb-40">
+            {error && <div className="mb-4 rounded bg-red-50 text-red-700 px-4 py-3 text-sm">{error}</div>}
 
             {/* Add Coupon */}
             <form onSubmit={(e) => toast.promise(handleAddCoupon(e), { loading: "Adding coupon..." })} className="max-w-sm text-sm">
