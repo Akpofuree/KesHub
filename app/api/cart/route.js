@@ -33,3 +33,22 @@ export async function POST(request) {
 
   return NextResponse.json(updated);
 }
+
+export async function DELETE(request) {
+  const { productId } = await request.json();
+  const { cart } = await getOrCreateCart();
+
+  await prisma.cartItem.deleteMany({
+    where: {
+      cartId: cart.id,
+      productId: productId,
+    },
+  });
+
+  const updated = await prisma.cart.findUnique({
+    where: { id: cart.id },
+    include: { items: { include: { product: true } } },
+  });
+
+  return NextResponse.json(updated);
+}

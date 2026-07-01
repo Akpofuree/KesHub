@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ConditionBadge from "./ConditionBadge";
+import ProductCardActions from "./ProductCardActions";
 
 function formatPrice(amount) {
   return "₦" + amount.toLocaleString("en-NG");
@@ -7,7 +8,7 @@ function formatPrice(amount) {
 
 export default function ProductCard({ product }) {
   return (
-    <Link href={`/shop/${product.slug}`} className="group block bg-white rounded-2xl border border-gray-100 hover:shadow-lg transition-shadow overflow-hidden">
+    <Link href={`/shop/${product.slug}`} className="group block bg-white rounded-2xl border border-gray-100 hover:shadow-lg transition-shadow overflow-hidden relative">
       {/* Image */}
       <div className="relative aspect-square overflow-hidden bg-gray-50">
         {product.images?.[0] ? (
@@ -19,6 +20,9 @@ export default function ProductCard({ product }) {
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-300 text-4xl">📦</div>
         )}
+        
+        <ProductCardActions productId={product.id} />
+
         {product.isSecondhand && product.condition && (
           <div className="absolute top-2 left-2">
             <ConditionBadge condition={product.condition} />

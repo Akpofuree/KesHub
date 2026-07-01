@@ -7,11 +7,11 @@ const AdminNavbar = () => {
 
     return (
         <div className="flex items-center justify-between px-12 py-3 border-b border-slate-200 transition-all">
-            <Link href="/" className="relative inline-flex items-center">
+            <Link href="/" className="relative inline-flex items-center gap-2">
                 <BrandLogo showWordmark />
-                <p className="absolute text-xs font-semibold -top-1 -right-13 px-3 p-0.5 rounded-full flex items-center gap-2 text-white bg-green-500">
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full text-white bg-green-500 self-start mt-1">
                     Admin
-                </p>
+                </span>
             </Link>
             <div className="flex items-center gap-3">
                 <p>Hi, Admin</p>

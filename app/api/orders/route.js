@@ -15,8 +15,10 @@ const cartItemSchema = z.object({
 });
 
 const createOrderSchema = z.object({
-    storeId: z.string().min(1),
-    addressId: z.string().min(1),
+    customerName: z.string().min(1),
+    customerEmail: z.string().email(),
+    customerPhone: z.string(),
+    address: z.string().min(1),
     cartItems: z.array(cartItemSchema).min(1),
     total: z.number().positive(),
 });
@@ -42,17 +44,18 @@ export async function PATCH(request) {
 
 export async function POST(request) {
     try {
-        const { userId } = auth();
+        const { userId } = await auth();
         if (!userId) {
             return fail("Unauthorized", 401);
         }
 
         const body = await request.json();
-        const { storeId, addressId, cartItems, total } = createOrderSchema.parse(body);
+        const { customerName, customerEmail, customerPhone, address, cartItems, total } = createOrderSchema.parse(body);
         const order = await createOrder({
-            userId,
-            storeId,
-            addressId,
+            customerName,
+            customerEmail,
+            customerPhone,
+            address,
             cartItems,
             total,
             paymentMethod: "PAYSTACK",

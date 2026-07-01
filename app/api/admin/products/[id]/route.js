@@ -13,14 +13,16 @@ export async function PUT(request, { params }) {
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json();
+  const images = Array.isArray(body.images) ? body.images : undefined;
 
   const product = await prisma.product.update({
     where: { id: params.id },
     data: {
       ...body,
+      ...(images !== undefined ? { images } : {}),
       price: parseFloat(body.price),
       comparePrice: body.comparePrice ? parseFloat(body.comparePrice) : null,
-      stock: parseInt(body.stock),
+      stock: parseInt(body.stock || "0", 10),
     },
   });
 

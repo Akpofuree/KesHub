@@ -10,7 +10,7 @@ const initializeSchema = z.object({
 
 export async function POST(request) {
     try {
-        const { userId } = auth();
+        const { userId } = await auth();
         if (!userId) {
             return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
         }
@@ -30,10 +30,6 @@ export async function POST(request) {
             return NextResponse.json({ success: false, message: "Order not found" }, { status: 404 });
         }
 
-        if (order.userId !== userId) {
-            return NextResponse.json({ success: false, message: "Forbidden" }, { status: 403 });
-        }
-
         const callbackUrl = process.env.NEXT_PUBLIC_APP_URL
             ? `${process.env.NEXT_PUBLIC_APP_URL}/payment/verify`
             : new URL("/payment/verify", request.url).toString();
@@ -46,7 +42,7 @@ export async function POST(request) {
             },
             body: JSON.stringify({
                 email,
-                amount: Math.round(order.total * 100),
+                amount: Math.round(order.totalAmount * 100),
                 metadata: { orderId },
                 callback_url: callbackUrl,
             }),
