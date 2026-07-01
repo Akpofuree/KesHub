@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { CircleDollarSignIcon, ShoppingBasketIcon, PackageIcon, AlertTriangleIcon } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function AdminDashboard() {
   const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "?";
 

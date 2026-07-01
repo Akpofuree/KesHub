@@ -36,8 +36,17 @@ export default function Cart() {
         setCartArray(cartArray);
     }
 
-    const handleDeleteItemFromCart = (productId) => {
-        dispatch(deleteItemFromCart({ productId }))
+    const handleDeleteItemFromCart = async (productId) => {
+        dispatch(deleteItemFromCart({ productId }));
+        try {
+            await fetch('/api/cart', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productId }),
+            });
+        } catch (error) {
+            console.error("Failed to delete item from cart", error);
+        }
     }
 
     useEffect(() => {

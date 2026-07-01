@@ -2,7 +2,7 @@
 
 import BrandLogo from "@/components/BrandLogo";
 import AuthChoiceCard from "@/components/AuthChoiceCard";
-import AuthForm from "@/components/AuthForm";
+import { SignIn } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
 
 export default function Page() {
@@ -32,7 +32,41 @@ export default function Page() {
           />
         </div>
         <div className="mt-8 flex justify-center">
-          <AuthForm mode="signin" role={role} />
+          {role === "customer" ? (
+            <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+              <div className="mb-6">
+                <p className="text-sm font-medium uppercase tracking-[0.2em] text-green-600">
+                  Customer Sign In
+                </p>
+                <h1 className="mt-2 text-3xl font-semibold text-slate-900">
+                  Welcome back
+                </h1>
+                <p className="mt-2 text-sm text-slate-600">
+                  Sign in to access your account and continue shopping.
+                </p>
+              </div>
+              <SignIn routing="path" path="/sign-in" forceRedirectUrl="/" />
+            </div>
+          ) : (
+            <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+              <div className="mb-6">
+                <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-900">
+                  Admin Sign In
+                </p>
+                <h1 className="mt-2 text-3xl font-semibold text-slate-900">
+                  Admin access
+                </h1>
+                <p className="mt-2 text-sm text-slate-600">
+                  Sign in to access the admin dashboard and manage your store.
+                </p>
+              </div>
+              <SignIn
+                routing="path"
+                path="/sign-in"
+                forceRedirectUrl="/admin"
+              />
+            </div>
+          )}
         </div>
       </div>
     </main>

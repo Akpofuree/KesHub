@@ -11,13 +11,13 @@ export async function GET(request) {
 
   if (productId) {
     const item = await prisma.wishlistItem.findUnique({
-      where: { userId_productId: { userId, productId } },
+      where: { sessionId_productId: { sessionId: userId, productId } },
     });
     return NextResponse.json({ exists: !!item });
   }
 
   const wishlist = await prisma.wishlistItem.findMany({
-    where: { userId },
+    where: { sessionId: userId },
     include: { product: true },
     orderBy: { createdAt: "desc" },
   });
@@ -31,9 +31,9 @@ export async function POST(request) {
   const { productId } = await request.json();
 
   const item = await prisma.wishlistItem.upsert({
-    where: { userId_productId: { userId, productId } },
+    where: { sessionId_productId: { sessionId: userId, productId } },
     update: {},
-    create: { userId, productId },
+    create: { sessionId: userId, productId },
     include: { product: true },
   });
 
@@ -47,7 +47,7 @@ export async function DELETE(request) {
   const { productId } = await request.json();
 
   await prisma.wishlistItem.delete({
-    where: { userId_productId: { userId, productId } },
+    where: { sessionId_productId: { sessionId: userId, productId } },
   });
 
   return NextResponse.json({ success: true });

@@ -1,12 +1,19 @@
 "use client";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/lib/features/cart/cartSlice";
 
 export default function AddToCartButton({ productId, disabled = false }) {
   const [loading, setLoading] = useState(false);
   const [added, setAdded] = useState(false);
+  const dispatch = useDispatch();
 
   async function handleAdd() {
     setLoading(true);
+    // Dispatch to Redux state immediately for UI update
+    dispatch(addToCart({ productId }));
+    
+    // Update backend asynchronously
     await fetch("/api/cart", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

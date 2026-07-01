@@ -1,9 +1,9 @@
 "use client";
-import { LayoutDashboard, Search, ShoppingCart, Menu, X } from "lucide-react";
+import { LayoutDashboard, Search, ShoppingCart, Heart, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import BrandLogo from "@/components/BrandLogo";
 
@@ -19,127 +19,156 @@ const Navbar = () => {
     role === "ADMIN" ? "/admin" : role === "SELLER" ? "/store" : null;
   const dashboardLabel = role === "ADMIN" ? "Admin dashboard" : "Dashboard";
 
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    fetch("/api/cart")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.items) {
+          import("@/lib/features/cart/cartSlice").then(({ setCart }) => {
+            dispatch(setCart(data));
+          });
+        }
+      })
+      .catch((err) => console.error("Failed to load cart", err));
+  }, [dispatch]);
+
   const handleSearch = (e) => {
     e.preventDefault();
     router.push(`/shop?search=${search}`);
   };
 
   return (
-    <nav className="relative bg-white">
+    <nav className="relative bg-white border-b border-gray-200">
       <div className="mx-6">
-        <div className="flex items-center justify-between max-w-7xl mx-auto py-4 transition-all">
-          <Link href="/" className="relative">
+        <div className="flex items-center justify-between max-w-7xl mx-auto py-4 gap-4 md:gap-8 transition-all">
+          {/* Logo - Left */}
+          <Link href="/" className="relative flex-shrink-0">
             <BrandLogo
               showWordmark={false}
               variant="light"
-              className="scale-110 sm:scale-125"
             />
           </Link>
 
-          <div className="hidden sm:flex items-center gap-4 lg:gap-8 text-slate-600">
-            <Link href="/">Home</Link>
-            <Link href="/shop">Shop</Link>
-            <Link href="/about">About</Link>
-            <Link href="/contact">Contact</Link>
+          {/* Nav Links & Actions - Right */}
+          <div className="hidden md:flex items-center gap-6 text-slate-600 font-medium ml-auto">
+            <div className="hidden lg:flex items-center gap-6">
+              <Link href="/" className="hover:text-green-600 transition-colors">Home</Link>
+              <Link href="/shop" className="hover:text-green-600 transition-colors">Shop</Link>
+              <Link href="/about" className="hover:text-green-600 transition-colors">About</Link>
+              <Link href="/contact" className="hover:text-green-600 transition-colors">Contact</Link>
+            </div>
 
-            <form
-              onSubmit={handleSearch}
-              className="hidden xl:flex items-center w-xs text-sm gap-2 bg-slate-100 px-4 py-3 rounded-full"
-            >
-              <Search size={18} className="text-slate-600" />
-              <input
-                className="w-full bg-transparent outline-none placeholder-slate-600"
-                type="text"
-                placeholder="Search products"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                required
-              />
-            </form>
+            <div className="flex items-center gap-5 border-l border-slate-200 pl-6 ml-2">
+              {/* Expandable Search */}
+              <div className="group relative flex items-center">
+                <div className="absolute right-0 flex items-center w-0 overflow-hidden group-hover:w-64 transition-all duration-300 ease-in-out opacity-0 group-hover:opacity-100 z-50">
+                  <form
+                    onSubmit={handleSearch}
+                    className="flex items-center w-full text-sm gap-2 bg-white px-4 py-2.5 rounded-full border border-slate-300 shadow-sm focus-within:border-green-500 focus-within:ring-1 focus-within:ring-green-500"
+                  >
+                    <input
+                      className="w-full bg-transparent outline-none placeholder-slate-500 text-slate-800"
+                      type="text"
+                      placeholder="Search products..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
+                  </form>
+                </div>
+                <button 
+                  className="relative p-1 text-slate-600 hover:text-green-600 transition-colors z-10 bg-white"
+                  aria-label="Search"
+                >
+                  <Search size={22} />
+                </button>
+              </div>
 
-            <Link
-              href="/cart"
-              className="relative flex items-center gap-2 text-slate-600"
-            >
-              <ShoppingCart size={18} />
-              Cart
-              <span className="absolute -top-1 left-3 text-[8px] text-white bg-slate-600 size-3.5 rounded-full flex items-center justify-center">
-                {cartCount}
-              </span>
-            </Link>
+              <Link
+                href="/wishlist"
+                className="relative flex items-center text-slate-600 hover:text-green-600 transition-colors"
+                title="Wishlist"
+              >
+                <Heart size={22} />
+              </Link>
+              <Link
+                href="/cart"
+                className="relative flex items-center text-slate-600 hover:text-green-600 transition-colors"
+                title="Cart"
+              >
+                <ShoppingCart size={22} />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1.5 -right-2 text-[10px] font-bold text-white bg-green-600 h-4 w-4 rounded-full flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
 
-            <div className="flex items-center gap-3">
-              {hasClerkKey ? (
-                <>
-                  <SignedIn>
-                    {dashboardHref ? (
+              <div className="flex items-center gap-3">
+                {hasClerkKey ? (
+                  <>
+                    <SignedIn>
+                      {dashboardHref ? (
+                        <Link
+                          href={dashboardHref}
+                          className="flex items-center gap-2 px-4 py-2 border border-slate-300 hover:border-green-500 hover:text-green-600 transition text-slate-700 rounded-full text-sm"
+                        >
+                          <LayoutDashboard size={16} />
+                          {dashboardLabel}
+                        </Link>
+                      ) : null}
+                      <UserButton afterSignOutUrl="/" />
+                    </SignedIn>
+                    <SignedOut>
                       <Link
-                        href={dashboardHref}
-                        className="hidden lg:inline-flex items-center gap-2 px-5 py-2 border border-slate-300 hover:border-slate-400 transition text-slate-700 rounded-full"
+                        href="/sign-in"
+                        className="px-5 py-2 text-sm border border-slate-300 hover:border-green-500 hover:text-green-600 transition text-slate-700 rounded-full"
                       >
-                        <LayoutDashboard size={16} />
-                        {dashboardLabel}
+                        Login
                       </Link>
-                    ) : null}
-                    <UserButton afterSignOutUrl="/" />
-                  </SignedIn>
-                  <SignedOut>
-                    <Link
-                      href="/sign-in"
-                      className="px-6 py-2 border border-slate-300 hover:border-slate-400 transition text-slate-700 rounded-full"
-                    >
-                      Login
-                    </Link>
-                    <Link
-                      href="/sign-up"
-                      className="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 transition text-white rounded-full"
-                    >
-                      Sign up
-                    </Link>
-                  </SignedOut>
-                </>
-              ) : null}
-              {!hasClerkKey && (
-                <>
-                  <Link
-                    href="/sign-in"
-                    className="px-6 py-2 border border-slate-300 hover:border-slate-400 transition text-slate-700 rounded-full"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/sign-up"
-                    className="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 transition text-white rounded-full"
-                  >
-                    Sign up
-                  </Link>
-                </>
-              )}
+                    </SignedOut>
+                  </>
+                ) : null}
+              </div>
             </div>
           </div>
 
-          <div className="sm:hidden flex items-center gap-3">
+          {/* Mobile Actions */}
+          <div className="md:hidden flex items-center gap-4">
+            <Link
+              href="/wishlist"
+              className="relative flex items-center text-slate-600"
+            >
+              <Heart size={22} />
+            </Link>
+            <Link
+              href="/cart"
+              className="relative flex items-center text-slate-600"
+            >
+              <ShoppingCart size={22} />
+              {cartCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 text-[10px] font-bold text-white bg-green-600 h-4 w-4 rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+            {hasClerkKey ? (
+              <SignedIn>
+                <UserButton afterSignOutUrl="/" />
+              </SignedIn>
+            ) : null}
             <button
-              className="p-2"
+              className="p-1"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Toggle menu"
             >
               {menuOpen ? (
-                <X className="w-6 h-6" />
+                <X className="w-6 h-6 text-slate-600" />
               ) : (
-                <Menu className="w-6 h-6" />
+                <Menu className="w-6 h-6 text-slate-600" />
               )}
             </button>
-            <Link
-              href="/cart"
-              className="relative flex items-center gap-2 text-slate-600"
-            >
-              <ShoppingCart size={18} />
-              <span className="absolute -top-1 left-3 text-[8px] text-white bg-slate-600 size-3.5 rounded-full flex items-center justify-center">
-                {cartCount}
-              </span>
-            </Link>
-            {hasClerkKey ? <UserButton afterSignOutUrl="/" /> : null}
           </div>
         </div>
       </div>

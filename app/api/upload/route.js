@@ -9,26 +9,39 @@ cloudinary.config({
 });
 
 export async function POST(request) {
-  const { userId } = await auth();
-  if (!userId)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  const formData = await request.formData();
-  const file = formData.get("file");
-  const arrayBuffer = await file.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
+    const formData = await request.formData();
+    const file = formData.get("file");
 
-  const result = await new Promise((resolve, reject) => {
-    cloudinary.uploader
-      .upload_stream(
-        { folder: "keshub/products", quality: "auto", fetch_format: "auto" },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        },
-      )
-      .end(buffer);
-  });
+    if (!file || typeof file.arrayBuffer !== "function") {
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    }
 
-  return NextResponse.json({ url: result.secure_url });
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          { folder: "keshub/products", quality: "auto", fetch_format: "auto" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          },
+        )
+        .end(buffer);
+    });
+
+    return NextResponse.json({ url: result.secure_url });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error?.message || "Upload failed" },
+      { status: 500 },
+    );
+  }
 }

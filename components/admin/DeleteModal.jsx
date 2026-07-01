@@ -22,10 +22,10 @@ export default function DeleteModal({ productId, productName, onClose }) {
           Are you sure you want to delete <strong>{productName}</strong>? This cannot be undone.
         </p>
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+          <button type="button" onClick={onClose} className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
             Cancel
           </button>
-          <button onClick={handleDelete} disabled={loading}
+          <button type="button" onClick={handleDelete} disabled={loading}
             className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50">
             {loading ? "Deleting..." : "Delete"}
           </button>

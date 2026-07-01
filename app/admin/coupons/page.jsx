@@ -122,7 +122,7 @@ export default function AdminCoupons() {
                         <p>For Member</p>
                     </div>
                 </div>
-                <button className="mt-4 p-2 px-10 rounded bg-slate-700 text-white active:scale-95 transition">Add Coupon</button>
+                <button type="submit" className="mt-4 p-2 px-10 rounded bg-slate-700 text-white active:scale-95 transition">Add Coupon</button>
             </form>
 
             {/* List Coupons */}

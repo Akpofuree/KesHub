@@ -24,8 +24,13 @@ export default function ProductsPage() {
     if (search) params.set("search", search);
     
     const res = await fetch(`/api/admin/products?${params}`);
-    const data = await res.json();
-    setProducts(data.products || []);
+    const data = await res.json().catch(() => null);
+    if (!res.ok) {
+      setProducts([]);
+      setLoading(false);
+      return;
+    }
+    setProducts(data?.products || []);
     setLoading(false);
   }
 
@@ -120,8 +125,8 @@ export default function ProductsPage() {
                   </td>
                   <td className="p-3">{formatPrice(product.price)}</td>
                   <td className="p-3">
-                    <span className={product.stock === 0 ? "text-red-500" : "text-green-600"}>
-                      {product.stock}
+                    <span className={product.stock > 0 ? "text-green-600" : "text-red-500"}>
+                      {product.stock > 0 ? "In stock" : "Out of stock"}
                     </span>
                   </td>
                   <td className="p-3">

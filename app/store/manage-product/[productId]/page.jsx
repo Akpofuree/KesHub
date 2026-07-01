@@ -170,7 +170,7 @@ export default function EditProductPage() {
                 ))}
             </select>
 
-            <button disabled={saving} className="bg-slate-800 text-white px-6 mt-7 py-2 hover:bg-slate-900 rounded transition">
+            <button type="submit" disabled={saving} className="bg-slate-800 text-white px-6 mt-7 py-2 hover:bg-slate-900 rounded transition">
                 Save changes
             </button>
         </form>

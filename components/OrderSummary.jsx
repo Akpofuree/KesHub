@@ -60,8 +60,10 @@ const OrderSummary = ({ totalPrice, items }) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                storeId: items[0]?.storeId,
-                addressId: selectedAddress.id,
+                customerName: selectedAddress.name || '',
+                customerEmail: email,
+                customerPhone: selectedAddress.phone || '',
+                address: `${selectedAddress.street || ''}, ${selectedAddress.city || ''}, ${selectedAddress.state || ''}, ${selectedAddress.zip || ''}`,
                 cartItems: items.map((item) => ({
                     productId: item.id,
                     quantity: item.quantity,
@@ -131,7 +133,7 @@ const OrderSummary = ({ totalPrice, items }) => {
                                 ))}
                             </select>
                         )}
-                        <button className='flex items-center gap-1 text-slate-600 mt-1' onClick={() => setShowAddressModal(true)}>
+                        <button type="button" className='flex items-center gap-1 text-slate-600 mt-1' onClick={() => setShowAddressModal(true)}>
                             Add Address <PlusIcon size={18} />
                         </button>
                     </div>
@@ -153,7 +155,7 @@ const OrderSummary = ({ totalPrice, items }) => {
                 {!coupon ? (
                     <form onSubmit={(e) => toast.promise(handleCouponCode(e), { loading: 'Checking Coupon...' })} className='flex justify-center gap-3 mt-3'>
                         <input onChange={(e) => setCouponCodeInput(e.target.value)} value={couponCodeInput} type="text" placeholder='Coupon Code' className='border border-slate-400 p-1.5 rounded w-full outline-none' />
-                        <button className='bg-slate-600 text-white px-3 rounded hover:bg-slate-800 active:scale-95 transition-all'>Apply</button>
+                        <button type="submit" className='bg-slate-600 text-white px-3 rounded hover:bg-slate-800 active:scale-95 transition-all'>Apply</button>
                     </form>
                 ) : (
                     <div className='w-full flex items-center justify-center gap-2 text-xs mt-2'>

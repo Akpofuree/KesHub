@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import slugify from "slugify";
 
 export async function GET(request) {
   const { userId } = await auth();
@@ -19,6 +18,7 @@ export async function GET(request) {
       OR: [
         { name: { contains: search, mode: "insensitive" } },
         { brand: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
         { model: { contains: search, mode: "insensitive" } },
       ],
     }),
@@ -38,26 +38,35 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = await request.json();
+    const body = await request.json();
+    const images = Array.isArray(body.images) ? body.images : [];
 
-  const baseSlug = slugify(`${body.brand}-${body.name}-${body.model || ""}`, {
-    lower: true,
-    strict: true,
-  });
-  const slug = `${baseSlug}-${Date.now()}`;
+    const slug = body.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.random().toString(36).substring(2, 8);
+    const condition = body.condition || null;
+    const simStatus = body.simStatus || null;
+    const storageType = body.storageType || null;
 
-  const product = await prisma.product.create({
-    data: {
-      ...body,
-      slug,
-      price: parseFloat(body.price),
-      comparePrice: body.comparePrice ? parseFloat(body.comparePrice) : null,
-      stock: parseInt(body.stock),
-    },
-  });
+    const product = await prisma.product.create({
+      data: {
+        ...body,
+        slug,
+        condition,
+        simStatus,
+        storageType,
+        price: parseFloat(body.price),
+        comparePrice: body.comparePrice ? parseFloat(body.comparePrice) : null,
+        stock: parseInt(body.stock || "0", 10),
+        images,
+      },
+    });
 
-  return NextResponse.json(product, { status: 201 });
+    return NextResponse.json(product, { status: 201 });
+  } catch (error) {
+    console.error("Product creation error:", error);
+    return NextResponse.json({ error: error.message || "Failed to create product" }, { status: 500 });
+  }
 }
