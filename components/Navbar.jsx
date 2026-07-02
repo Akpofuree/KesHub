@@ -1,12 +1,5 @@
 "use client";
-import {
-  LayoutDashboard,
-  Search,
-  ShoppingCart,
-  Heart,
-  Menu,
-  X,
-} from "lucide-react";
+import { LayoutDashboard, Search, ShoppingCart, Heart, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -52,36 +45,19 @@ const Navbar = () => {
         <div className="flex items-center justify-between max-w-7xl mx-auto py-4 gap-4 md:gap-8 transition-all">
           {/* Logo - Left */}
           <Link href="/" className="relative flex-shrink-0">
-            <BrandLogo showWordmark={false} variant="light" />
+            <BrandLogo
+              showWordmark={false}
+              variant="light"
+            />
           </Link>
 
           {/* Nav Links & Actions - Right */}
           <div className="hidden md:flex items-center gap-6 text-slate-600 font-medium ml-auto">
             <div className="hidden lg:flex items-center gap-6">
-              <Link
-                href="/"
-                className="hover:text-emerald-600 transition-colors"
-              >
-                Home
-              </Link>
-              <Link
-                href="/shop"
-                className="hover:text-emerald-600 transition-colors"
-              >
-                Shop
-              </Link>
-              <Link
-                href="/about"
-                className="hover:text-emerald-600 transition-colors"
-              >
-                About
-              </Link>
-              <Link
-                href="/contact"
-                className="hover:text-emerald-600 transition-colors"
-              >
-                Contact
-              </Link>
+              <Link href="/" className="hover:text-green-600 transition-colors">Home</Link>
+              <Link href="/shop" className="hover:text-green-600 transition-colors">Shop</Link>
+              <Link href="/about" className="hover:text-green-600 transition-colors">About</Link>
+              <Link href="/contact" className="hover:text-green-600 transition-colors">Contact</Link>
             </div>
 
             <div className="flex items-center gap-5 border-l border-slate-200 pl-6 ml-2">
@@ -90,7 +66,7 @@ const Navbar = () => {
                 <div className="absolute right-0 flex items-center w-0 overflow-hidden group-hover:w-64 transition-all duration-300 ease-in-out opacity-0 group-hover:opacity-100 z-50">
                   <form
                     onSubmit={handleSearch}
-                    className="flex items-center w-full text-sm gap-2 bg-white px-4 py-2.5 rounded-full border border-slate-300 shadow-sm focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500"
+                    className="flex items-center w-full text-sm gap-2 bg-white px-4 py-2.5 rounded-full border border-slate-300 shadow-sm focus-within:border-green-500 focus-within:ring-1 focus-within:ring-green-500"
                   >
                     <input
                       className="w-full bg-transparent outline-none placeholder-slate-500 text-slate-800"
@@ -101,8 +77,8 @@ const Navbar = () => {
                     />
                   </form>
                 </div>
-                <button
-                  className="relative p-1 text-slate-600 hover:text-emerald-600 transition-colors z-10 bg-white"
+                <button 
+                  className="relative p-1 text-slate-600 hover:text-green-600 transition-colors z-10 bg-white"
                   aria-label="Search"
                 >
                   <Search size={22} />
@@ -111,19 +87,19 @@ const Navbar = () => {
 
               <Link
                 href="/wishlist"
-                className="relative flex items-center text-slate-600 hover:text-emerald-600 transition-colors"
+                className="relative flex items-center text-slate-600 hover:text-green-600 transition-colors"
                 title="Wishlist"
               >
                 <Heart size={22} />
               </Link>
               <Link
                 href="/cart"
-                className="relative flex items-center text-slate-600 hover:text-emerald-600 transition-colors"
+                className="relative flex items-center text-slate-600 hover:text-green-600 transition-colors"
                 title="Cart"
               >
                 <ShoppingCart size={22} />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 text-[10px] font-bold text-white bg-emerald-600 h-4 w-4 rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1.5 -right-2 text-[10px] font-bold text-white bg-green-600 h-4 w-4 rounded-full flex items-center justify-center">
                     {cartCount}
                   </span>
                 )}
@@ -136,7 +112,7 @@ const Navbar = () => {
                       {dashboardHref ? (
                         <Link
                           href={dashboardHref}
-                          className="flex items-center gap-2 px-4 py-2 border border-slate-300 hover:border-emerald-500 hover:text-emerald-600 transition text-slate-700 rounded-full text-sm"
+                          className="flex items-center gap-2 px-4 py-2 border border-slate-300 hover:border-green-500 hover:text-green-600 transition text-slate-700 rounded-full text-sm"
                         >
                           <LayoutDashboard size={16} />
                           {dashboardLabel}
@@ -147,7 +123,7 @@ const Navbar = () => {
                     <SignedOut>
                       <Link
                         href="/sign-in"
-                        className="px-5 py-2 text-sm border border-slate-300 hover:border-emerald-500 hover:text-emerald-600 transition text-slate-700 rounded-full"
+                        className="px-5 py-2 text-sm border border-slate-300 hover:border-green-500 hover:text-green-600 transition text-slate-700 rounded-full"
                       >
                         Login
                       </Link>
@@ -168,11 +144,11 @@ const Navbar = () => {
             </Link>
             <Link
               href="/cart"
-              className="relative flex items-center text-slate-600 hover:text-emerald-600 transition-colors"
+              className="relative flex items-center text-slate-600"
             >
               <ShoppingCart size={22} />
               {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-2 text-[10px] font-bold text-white bg-emerald-600 h-4 w-4 rounded-full flex items-center justify-center">
+                <span className="absolute -top-1.5 -right-2 text-[10px] font-bold text-white bg-green-600 h-4 w-4 rounded-full flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
