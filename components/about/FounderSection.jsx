@@ -1,83 +1,106 @@
 "use client";
 import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
+
+const founderImage =
+  "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=1400&q=80";
 
 export default function FounderSection() {
-  const wrapRef = useRef(null);
-  const topPanelRef = useRef(null);
-  const bottomPanelRef = useRef(null);
+  const sectionRef = useRef(null);
+  const contentRef = useRef(null);
 
   useEffect(() => {
-    const wrap = wrapRef.current;
-    const topPanel = topPanelRef.current;
-    const bottomPanel = bottomPanelRef.current;
+    const section = sectionRef.current;
+    const content = contentRef.current;
+    if (!section || !content) return;
 
-    if (!wrap || !topPanel || !bottomPanel) return;
+    const ctx = gsap.context(() => {
+      // Pin the section (window effect) - content stays fixed
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: "+=200%",
+        pin: true,
+        scrub: 1,
+      });
 
-    const updateCurtain = () => {
-      const rect = wrap.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const start = viewportHeight * 0.85;
-      const end = viewportHeight * 0.35;
-      let progress = (start - rect.top) / (start - end);
-      progress = Math.max(0, Math.min(1, progress));
+      // Binoculars effect - content blurs into focus when entering viewport
+      gsap.fromTo(
+        content,
+        {
+          opacity: 0,
+          filter: "blur(10px)",
+          scale: 0.95,
+        },
+        {
+          opacity: 1,
+          filter: "blur(0px)",
+          scale: 1,
+          duration: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 80%",
+            end: "top 20%",
+            toggleActions: "play none none reverse",
+          },
+        },
+      );
+    }, section);
 
-      topPanel.style.transform = `translateY(${-progress * 100}%)`;
-      bottomPanel.style.transform = `translateY(${progress * 100}%)`;
-    };
-
-    updateCurtain();
-    window.addEventListener("scroll", updateCurtain, { passive: true });
-    window.addEventListener("resize", updateCurtain);
-
-    return () => {
-      window.removeEventListener("scroll", updateCurtain);
-      window.removeEventListener("resize", updateCurtain);
-    };
+    return () => ctx.revert();
   }, []);
 
   return (
-    <section className="w-full py-24 mb-16">
-      <div className="max-w-7xl mx-auto px-6 grid gap-12 lg:grid-cols-[1fr_1.05fr] lg:items-center">
-        <div className="text-center lg:text-left">
-          <span className="inline-block bg-green-100 text-green-700 text-xs font-semibold px-4 py-1.5 rounded-full mb-6 tracking-wide uppercase self-center lg:self-start">
-            Meet The Founder
-          </span>
-          <h2 className="text-4xl sm:text-5xl font-bold text-slate-800 mb-8 tracking-tight">
-            Building the future of e-commerce.
-          </h2>
-          <p className="text-lg sm:text-xl text-slate-500 leading-relaxed mb-6 font-light">
-            Our journey began with a frustration that many share: finding
-            reliable gadgets online was a hit-or-miss experience. I set out to
-            create a platform that prioritizes quality, trust, and community
-            above all else.
-          </p>
-          <p className="text-lg sm:text-xl text-slate-500 leading-relaxed mb-10 font-light">
-            Today, KES HUB is more than just a marketplace. It's a community of
-            tech lovers, verified sellers, and innovators. We are dedicated to
-            bringing you the best tools to shape your tomorrow.
-          </p>
-          <div className="font-semibold italic text-slate-800 text-3xl">
-            Ramedrin
-          </div>
-        </div>
+    <section
+      ref={sectionRef}
+      className="relative w-full h-screen overflow-hidden"
+    >
+      {/* Normal Image Element */}
+      <img
+        src={founderImage}
+        alt="Founder"
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ objectPosition: "center 30%" }}
+      />
 
-        <div
-          ref={wrapRef}
-          className="relative aspect-[3/4] w-full overflow-hidden rounded-[2rem] shadow-[0_20px_60px_rgba(15,23,42,0.12)]"
-        >
-          <img
-            src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=1000&q=80"
-            alt="Founder"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-          <div
-            ref={topPanelRef}
-            className="absolute inset-x-0 top-0 h-1/2 bg-white z-10 will-change-transform"
-          />
-          <div
-            ref={bottomPanelRef}
-            className="absolute inset-x-0 bottom-0 h-1/2 bg-white z-10 will-change-transform"
-          />
+      {/* Content - Fixed while section above scrolls over it */}
+      <div
+        ref={contentRef}
+        className="relative z-10 h-full flex items-center justify-center"
+      >
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 w-full">
+          <div className="grid items-center gap-14 lg:grid-cols-[0.95fr_1.05fr]">
+            <div className="max-w-xl rounded-[2rem] p-8 text-center lg:p-10 lg:text-left bg-white/90 backdrop-blur-sm shadow-xl">
+              <span className="mb-6 inline-block px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.3em] text-[#7c3f13]">
+                The Founder
+              </span>
+              <h2 className="mb-7 text-4xl font-bold leading-tight tracking-tight text-[#6b3510] sm:text-5xl">
+                Building a better shopping experience for modern buyers.
+              </h2>
+              <p className="mb-6 text-lg font-light leading-relaxed text-[#7a4a22] sm:text-xl">
+                Our journey began with a simple belief: online shopping should
+                feel trustworthy, inspiring, and genuinely human. That idea
+                shaped every step of what we are building today.
+              </p>
+              <p className="mb-8 text-lg font-light leading-relaxed text-[#7a4a22] sm:text-xl">
+                From curated picks to dependable service, we are creating a
+                space where quality, transparency, and community come first.
+              </p>
+              <div className="flex items-center justify-center gap-4 pt-2 lg:justify-start">
+                <div className="h-px w-12 bg-[#c99263]" />
+                <div className="text-3xl font-semibold italic text-[#6b3510]">
+                  Ramedrin
+                </div>
+              </div>
+            </div>
+
+            {/* Empty space for the image to show through */}
+            <div className="hidden lg:block" />
+          </div>
         </div>
       </div>
     </section>
