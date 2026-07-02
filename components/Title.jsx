@@ -1,19 +1,27 @@
-'use client'
-import { ArrowRight } from 'lucide-react'
-import Link from 'next/link'
-import React from 'react'
+"use client";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import React from "react";
 
-const Title = ({ title, description, visibleButton = true, href = '' }) => {
+const Title = ({ title, description, visibleButton = true, href = "" }) => {
+  return (
+    <div className="flex flex-col items-center text-center">
+      <h2 className="text-3xl sm:text-4xl font-semibold text-slate-950">
+        {title}
+      </h2>
+      <div className="mt-3 max-w-2xl text-sm sm:text-base text-slate-600">
+        {description}
+      </div>
+      {visibleButton && (
+        <Link
+          href={href}
+          className="mt-4 inline-flex items-center gap-2 text-emerald-600 font-semibold"
+        >
+          View more <ArrowRight size={16} />
+        </Link>
+      )}
+    </div>
+  );
+};
 
-    return (
-        <div className='flex flex-col items-center'>
-            <h2 className='text-2xl font-semibold text-slate-800'>{title}</h2>
-            <Link href={href} className='flex items-center gap-5 text-sm text-slate-600 mt-2'>
-                <p className='max-w-lg text-center'>{description}</p>
-                {visibleButton && <span className='text-green-500 flex items-center gap-1'>View more <ArrowRight size={14} /></span>}
-            </Link>
-        </div>
-    )
-}
-
-export default Title
+export default Title;
