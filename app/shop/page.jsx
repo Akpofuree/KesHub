@@ -1,18 +1,19 @@
-import { prisma } from "@/lib/prisma";
+﻿import { prisma } from "@/lib/prisma";
 import CategoryBar from "@/components/shop/CategoryBar";
 import FilterSidebar from "@/components/shop/FilterSidebar";
 import ProductCard from "@/components/shop/ProductCard";
-import Link from "next/link";
 import ShopControls from "@/components/shop/ShopControls";
 import Pagination from "@/components/shop/Pagination";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export default async function ShopPage({ searchParams }) {
-  const { category, condition, search, minPrice, maxPrice, brand, sort, page } = await searchParams;
-  
+  const { category, condition, search, minPrice, maxPrice, brand, sort, page } =
+    await searchParams;
+
   const currentPage = Math.max(1, parseInt(page) || 1);
   const itemsPerPage = 12;
 
-  // Determine sorting
   let orderBy = [{ isFeatured: "desc" }, { createdAt: "desc" }];
   if (sort === "price_asc") {
     orderBy = [{ price: "asc" }];
@@ -52,39 +53,58 @@ export default async function ShopPage({ searchParams }) {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Category Quick-Links */}
-      <div className="mb-8">
-        <CategoryBar />
-      </div>
+    <div className="bg-slate-50">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mb-6 flex items-center justify-between gap-4 rounded-3xl border border-white bg-white px-5 py-4 shadow-sm">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600">
+              Shop
+            </p>
+            <h1 className="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl">
+              Browse gadgets
+            </h1>
+          </div>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-emerald-500 hover:text-emerald-600"
+          >
+            <ArrowLeft size={16} />
+            Back home
+          </Link>
+        </div>
 
-      <div className="flex flex-col md:flex-row gap-8">
-        {/* Filter Sidebar */}
-        <FilterSidebar />
+        <div className="mb-8 rounded-3xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+          <CategoryBar />
+        </div>
 
-        {/* Product Grid */}
-        <div className="flex-1">
-          <ShopControls totalProducts={totalProducts} />
-          
-          {products.length === 0 ? (
-            <div className="text-center py-20 text-gray-400">
-              <p className="text-4xl mb-4">📦</p>
-              <p className="text-lg font-medium text-slate-700">No products found</p>
-              <p className="text-sm">Try adjusting your filters</p>
-            </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
+        <div className="flex flex-col gap-8 md:flex-row">
+          <FilterSidebar />
+
+          <div className="flex-1">
+            <ShopControls totalProducts={totalProducts} />
+
+            {products.length === 0 ? (
+              <div className="rounded-3xl border border-dashed border-slate-300 bg-white py-20 text-center text-slate-400 shadow-sm">
+                <p className="mb-4 text-4xl">🛍️</p>
+                <p className="text-lg font-medium text-slate-700">
+                  No products found
+                </p>
+                <p className="text-sm">Try adjusting your filters</p>
               </div>
-              
-              {totalPages > 1 && (
-                <Pagination currentPage={currentPage} totalPages={totalPages} />
-              )}
-            </>
-          )}
+            ) : (
+              <>
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                  {products.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+
+                {totalPages > 1 && (
+                  <Pagination currentPage={currentPage} totalPages={totalPages} />
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

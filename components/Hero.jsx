@@ -1,6 +1,6 @@
 "use client";
 import { assets } from "@/assets/assets";
-import { ArrowRightIcon, ChevronRightIcon } from "lucide-react";
+import { ChevronRightIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -36,19 +36,19 @@ const Hero = () => {
               />
             </Link>
             <h2 className="text-4xl sm:text-5xl leading-[1.1] my-3 font-semibold max-w-xl">
-              Gadgets that feel premium, without the premium markup.
+              Quality tech. Priced like it should be.
             </h2>
             <p className="text-slate-300 text-base sm:text-lg max-w-2xl leading-8">
-              Curated smartphones, laptops, and accessories — vetted for
-              quality, priced for real people.
+              Curated smartphones, laptops, and accessories. Priced for
+              quality, priced for you.
             </p>
             <div className="text-slate-200 text-sm sm:text-base font-medium mt-4 sm:mt-8">
-              <p>Starts from</p>
+              <p>No hidden fees. No inflated prices.</p>
               <p className="text-4xl font-semibold">{currency}4.90</p>
             </div>
             <Link
               href="/about"
-              className="inline-block bg-emerald-600 text-white text-sm py-3 px-8 mt-6 rounded-full hover:bg-emerald-700 transition"
+              className="inline-block self-center sm:self-start bg-emerald-600 text-white text-sm py-3 px-8 mt-6 rounded-full hover:bg-emerald-700 transition"
             >
               Learn More
             </Link>
@@ -61,46 +61,37 @@ const Hero = () => {
         </div>
         <div className="flex flex-col md:flex-row xl:flex-col gap-5 w-full xl:max-w-sm text-sm text-slate-700">
           <div
-            className="flex-1 flex flex-col sm:flex-row items-center justify-between gap-6 w-full bg-slate-50 border border-slate-200 rounded-[32px] p-6 px-8 hover:border-emerald-300 transition duration-300 cursor-pointer"
+            className="flex-1 flex flex-col items-start justify-between gap-6 w-full bg-slate-50 border border-slate-200 rounded-[32px] p-6 px-8 hover:border-emerald-300 transition duration-300 cursor-pointer"
             onClick={scrollToBestSelling}
           >
             <div className="flex-1">
               <p className="text-3xl font-semibold text-slate-950">
                 Best products
               </p>
-              <p className="flex items-center gap-1 mt-4 text-slate-500">
-                View more{" "}
-                <ArrowRightIcon className="transition-all" size={18} />{" "}
-              </p>
+              <p className="mt-4 text-slate-500">View more</p>
             </div>
             <Image
-              className="w-24 sm:w-28 object-contain"
+              className="w-24 sm:w-28 object-contain self-center"
               src={assets.hero_product_img1}
               alt=""
             />
           </div>
           <Link
             href="/shop?minPrice=0&maxPrice=50"
-            className="flex-1 flex flex-col justify-between gap-4 w-full bg-slate-50 border border-slate-200 rounded-[32px] p-6 px-8 hover:border-emerald-300 transition duration-300"
+            className="flex-1 flex flex-col items-start justify-between gap-4 w-full bg-slate-50 border border-slate-200 rounded-[32px] p-6 px-8 hover:border-emerald-300 transition duration-300"
           >
             <div>
               <p className="text-2xl sm:text-3xl font-semibold text-slate-950">
                 Premium tech, honest prices.
               </p>
               <p className="mt-3 text-sm text-slate-500 max-w-sm">
-                Save up to 20% on selected gadgets — no gimmicks, just fair
+                Save up to 20% on selected gadgets - no gimmicks, just fair
                 pricing done right.
               </p>
             </div>
-            <div className="flex items-center justify-between gap-4">
-              <span className="text-slate-600 font-medium">View more</span>
-              <ArrowRightIcon
-                className="transition-all text-slate-600"
-                size={18}
-              />
-            </div>
+            <span className="text-slate-600 font-medium">View more</span>
             <Image
-              className="w-28 sm:w-32 object-contain self-end"
+              className="w-28 sm:w-32 object-contain self-center"
               src={assets.hero_product_img2}
               alt=""
             />

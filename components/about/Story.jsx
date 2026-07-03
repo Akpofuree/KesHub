@@ -1,32 +1,32 @@
 const story =
-  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1000&q=80";
+  "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1000&q=80";
 
 export default function Story() {
   return (
-    <section className="py-36">
-      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-24 items-center">
+    <section className="py-24 sm:py-28 lg:py-36">
+      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-14 lg:gap-24 items-center">
         <div>
-          <span className="uppercase tracking-[0.4em] text-emerald-600 text-sm font-semibold">
+          <span className="uppercase tracking-[0.3em] text-emerald-600 text-sm font-semibold">
             Our Story
           </span>
 
-          <h2 className="text-5xl font-semibold mt-6 leading-tight text-slate-950">
+          <h2 className="text-4xl sm:text-5xl font-semibold mt-4 sm:mt-5 leading-[1.08] text-slate-950">
             Building a trusted shopping experience for modern buyers.
           </h2>
 
-          <p className="mt-8 text-slate-600 leading-8 text-lg">
+          <p className="mt-6 sm:mt-7 text-slate-600 leading-7 sm:leading-8 text-base sm:text-lg">
             KES HUB was created to make device shopping simple, reliable and
             locally relevant. We curate technology from trusted brands and bring
             it to customers with fast delivery, clear pricing and real support.
           </p>
 
-          <p className="mt-6 text-slate-600 leading-8 text-lg">
+          <p className="mt-5 sm:mt-6 text-slate-600 leading-7 sm:leading-8 text-base sm:text-lg">
             From Lagos to the rest of Nigeria and beyond, our focus is on
             helping everyday shoppers find the right gadget without the
             guesswork.
           </p>
 
-          <button className="mt-10 inline-flex items-center justify-center rounded-full bg-emerald-600 px-8 py-4 text-white text-base font-semibold shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition">
+          <button className="mt-8 sm:mt-10 inline-flex items-center justify-center rounded-full bg-emerald-600 px-8 py-4 text-white text-base font-semibold shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition">
             Explore Our Story
           </button>
         </div>

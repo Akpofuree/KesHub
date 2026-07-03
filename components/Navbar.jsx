@@ -52,7 +52,11 @@ const Navbar = () => {
         <div className="flex items-center justify-between max-w-7xl mx-auto py-4 gap-4 md:gap-8 transition-all">
           {/* Logo - Left */}
           <Link href="/" className="relative flex-shrink-0">
-            <BrandLogo showWordmark={false} variant="light" />
+            <BrandLogo
+              showWordmark={false}
+              variant="light"
+              className="scale-110 sm:scale-125"
+            />
           </Link>
 
           {/* Nav Links & Actions - Right */}
@@ -85,29 +89,25 @@ const Navbar = () => {
             </div>
 
             <div className="flex items-center gap-5 border-l border-slate-200 pl-6 ml-2">
-              {/* Expandable Search */}
-              <div className="group relative flex items-center">
-                <div className="absolute right-0 flex items-center w-0 overflow-hidden group-hover:w-64 transition-all duration-300 ease-in-out opacity-0 group-hover:opacity-100 z-50">
-                  <form
-                    onSubmit={handleSearch}
-                    className="flex items-center w-full text-sm gap-2 bg-white px-4 py-2.5 rounded-full border border-slate-300 shadow-sm focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500"
-                  >
-                    <input
-                      className="w-full bg-transparent outline-none placeholder-slate-500 text-slate-800"
-                      type="text"
-                      placeholder="Search products..."
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                    />
-                  </form>
-                </div>
+              <form
+                onSubmit={handleSearch}
+                className="group flex items-center justify-end overflow-hidden rounded-full border border-transparent bg-white shadow-sm transition-all duration-300 hover:border-slate-200 focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500"
+              >
+                <input
+                  className="w-0 min-w-0 bg-transparent px-0 py-2 text-sm outline-none placeholder-slate-500 text-slate-800 opacity-0 transition-all duration-300 group-hover:w-64 group-hover:px-4 group-hover:opacity-100 group-focus-within:w-64 group-focus-within:px-4 group-focus-within:opacity-100"
+                  type="text"
+                  placeholder="Search products..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
                 <button
-                  className="relative p-1 text-slate-600 hover:text-emerald-600 transition-colors z-10 bg-white"
+                  className="relative p-2 text-slate-600 hover:text-emerald-600 transition-colors"
                   aria-label="Search"
+                  type="submit"
                 >
                   <Search size={22} />
                 </button>
-              </div>
+              </form>
 
               <Link
                 href="/wishlist"
@@ -211,7 +211,7 @@ const Navbar = () => {
             <button onClick={() => setMenuOpen(false)} className="mb-6">
               <X className="w-6 h-6" />
             </button>
-            <nav className="flex flex-col gap-4">
+            <nav className="flex flex-col gap-4 text-sm">
               <Link
                 href="/"
                 onClick={() => setMenuOpen(false)}
@@ -226,6 +226,21 @@ const Navbar = () => {
               >
                 Shop
               </Link>
+              <Link
+                href="/about"
+                onClick={() => setMenuOpen(false)}
+                className="text-slate-600"
+              >
+                About
+              </Link>
+              <Link
+                href="/contact"
+                onClick={() => setMenuOpen(false)}
+                className="text-slate-600"
+              >
+                Contact
+              </Link>
+              <div className="h-px bg-slate-200 my-2" />
               <Link
                 href="/shop?category=PHONES"
                 onClick={() => setMenuOpen(false)}
@@ -247,20 +262,7 @@ const Navbar = () => {
               >
                 Headphones
               </Link>
-              <Link
-                href="/about"
-                onClick={() => setMenuOpen(false)}
-                className="text-slate-600"
-              >
-                About
-              </Link>
-              <Link
-                href="/contact"
-                onClick={() => setMenuOpen(false)}
-                className="text-slate-600"
-              >
-                Contact
-              </Link>
+              <div className="h-px bg-slate-200 my-2" />
               {hasClerkKey ? (
                 <>
                   <SignedIn>

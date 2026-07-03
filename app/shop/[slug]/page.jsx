@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import ConditionBadge from "@/components/shop/ConditionBadge";
 import AddToCartButton from "@/components/shop/AddToCartButton";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 const WHATSAPP_NUMBER = "234XXXXXXXXXX"; // replace with owner's number
 
@@ -33,6 +35,13 @@ export default async function ProductDetailPage({ params }) {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
+      <Link
+        href="/shop"
+        className="inline-flex items-center gap-2 mb-6 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm"
+      >
+        <ArrowLeft size={16} />
+        Back to shop
+      </Link>
       <div className="grid md:grid-cols-2 gap-10">
 
         {/* Image Gallery */}

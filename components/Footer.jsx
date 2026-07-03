@@ -240,7 +240,7 @@ const Footer = () => {
           </div>
         </div>
         <p className="py-4 text-sm text-slate-500">
-          Copyright 2025 © KES HUB. All rights reserved.
+          Copyright (c) 2025 KES HUB. All rights reserved.
         </p>
       </div>
     </footer>

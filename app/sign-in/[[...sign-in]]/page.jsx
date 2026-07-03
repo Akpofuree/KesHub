@@ -2,6 +2,8 @@
 
 import BrandLogo from "@/components/BrandLogo";
 import AuthChoiceCard from "@/components/AuthChoiceCard";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import { SignIn } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
 
@@ -12,8 +14,22 @@ export default function Page() {
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#e8fff2_0%,_#f8fafc_40%,_#eef2ff_100%)] px-4 py-10">
       <div className="mx-auto max-w-6xl">
+        <div className="mb-4 flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm"
+          >
+            <ArrowLeft size={16} />
+            Back
+          </Link>
+          <div className="sr-only">Sign in</div>
+        </div>
         <div className="flex justify-center">
-          <BrandLogo className="scale-110 sm:scale-125" variant="light" />
+          <BrandLogo
+            showWordmark={false}
+            className="scale-110 sm:scale-125"
+            variant="light"
+          />
         </div>
         <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_1fr]">
           <AuthChoiceCard
@@ -33,7 +49,7 @@ export default function Page() {
         </div>
         <div className="mt-8 flex justify-center">
           {role === "customer" ? (
-            <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <div className="w-full max-w-[560px] rounded-3xl border border-slate-200 bg-white px-3 py-4 sm:px-8 sm:py-8 shadow-sm">
               <div className="mb-6">
                 <p className="text-sm font-medium uppercase tracking-[0.2em] text-green-600">
                   Customer Sign In
@@ -45,10 +61,15 @@ export default function Page() {
                   Sign in to access your account and continue shopping.
                 </p>
               </div>
-              <SignIn routing="path" path="/sign-in" forceRedirectUrl="/" />
+              <SignIn
+                routing="path"
+                path="/sign-in"
+                signUpUrl="/sign-up?role=customer"
+                forceRedirectUrl="/"
+              />
             </div>
           ) : (
-            <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <div className="w-full max-w-[560px] rounded-3xl border border-slate-200 bg-white px-3 py-4 sm:px-8 sm:py-8 shadow-sm">
               <div className="mb-6">
                 <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-900">
                   Admin Sign In
@@ -63,6 +84,7 @@ export default function Page() {
               <SignIn
                 routing="path"
                 path="/sign-in"
+                signUpUrl="/sign-up?role=admin"
                 forceRedirectUrl="/admin"
               />
             </div>

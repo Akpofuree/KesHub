@@ -3,15 +3,15 @@ import Title from "./Title";
 
 const Newsletter = () => {
   return (
-    <div className="flex flex-col items-center mx-4 my-36">
+    <div className="flex flex-col items-center mx-4 my-36 px-2 sm:px-0">
       <Title
         title="Never miss a drop."
         description="Get first access to new arrivals, price drops, and gadget guides — straight to your inbox, no spam."
         visibleButton={false}
       />
-      <div className="flex flex-col sm:flex-row bg-white text-sm p-1 rounded-full w-full max-w-xl my-10 border border-slate-200 shadow-sm">
+      <div className="flex flex-col sm:flex-row bg-white text-sm p-2 sm:p-1 rounded-[28px] sm:rounded-full w-full max-w-xl my-10 border border-slate-200 shadow-sm">
         <input
-          className="flex-1 pl-5 outline-none bg-transparent text-slate-700 placeholder:text-slate-400 min-w-0"
+          className="flex-1 px-5 py-3 outline-none bg-transparent text-slate-700 placeholder:text-slate-400 min-w-0 rounded-full"
           type="text"
           placeholder="Enter your email address"
         />
