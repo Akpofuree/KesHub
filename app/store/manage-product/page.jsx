@@ -6,6 +6,16 @@ import Link from "next/link"
 import Loading from "@/components/Loading"
 import { fetchJson } from "@/lib/fetch-json"
 
+async function safeJson(response) {
+    const text = await response.text()
+    if (!text) return null
+    try {
+        return JSON.parse(text)
+    } catch {
+        return null
+    }
+}
+
 export default function StoreManageProducts() {
 
     const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$'
@@ -15,20 +25,25 @@ export default function StoreManageProducts() {
     const [error, setError] = useState("")
 
     const fetchProducts = async () => {
-        const storesResponse = await fetchJson("/api/stores")
+        const storesResponse = await fetchJson("/api/stores/status")
         if (!storesResponse.ok) {
             setError(storesResponse.data?.message || "Failed to load products")
             setLoading(false)
             return
         }
-        const storeId = storesResponse.data?.data?.[0]?.id
+        const storeId = storesResponse.data?.data?.id
+        if (!storeId) {
+            setError("No approved store found for your account")
+            setLoading(false)
+            return
+        }
         const response = await fetchJson("/api/products")
         if (!response.ok) {
             setError(response.data?.message || "Failed to load products")
             setLoading(false)
             return
         }
-        setProducts((response.data?.data || []).filter((product) => !storeId || product.storeId === storeId))
+        setProducts((response.data?.data || []).filter((product) => product.storeId === storeId))
         setLoading(false)
     }
 
@@ -39,16 +54,16 @@ export default function StoreManageProducts() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ inStock: !current?.inStock }),
         })
-        const result = await response.json()
-        if (!response.ok) throw new Error(result.message || "Failed to update product stock")
-        setProducts((prev) => prev.map((product) => product.id === productId ? result.data : product))
+        const result = await safeJson(response)
+        if (!response.ok) throw new Error(result?.message || "Failed to update product stock")
+        setProducts((prev) => prev.map((product) => product.id === productId ? result?.data : product))
     }
 
     const removeProduct = async (productId) => {
         if (!confirm("Remove this product? This cannot be undone.")) return
         const response = await fetch(`/api/products/${productId}`, { method: "DELETE" })
-        const result = await response.json()
-        if (!response.ok) throw new Error(result.message || "Failed to remove product")
+        const result = await safeJson(response)
+        if (!response.ok) throw new Error(result?.message || "Failed to remove product")
         setProducts((prev) => prev.filter((product) => product.id !== productId))
     }
 

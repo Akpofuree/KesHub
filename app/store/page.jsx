@@ -30,13 +30,18 @@ export default function Dashboard() {
     ]
 
     const fetchDashboardData = async () => {
-        const storesResponse = await fetchJson("/api/stores")
+        const storesResponse = await fetchJson("/api/stores/status")
         if (!storesResponse.ok) {
             setError(storesResponse.data?.message || "Failed to load store dashboard")
             setLoading(false)
             return
         }
-        const storeId = storesResponse.data?.data?.[0]?.id
+        const storeId = storesResponse.data?.data?.id
+        if (!storeId) {
+            setError("No approved store found for your account")
+            setLoading(false)
+            return
+        }
         const response = await fetchJson(`/api/dashboard/store${storeId ? `?storeId=${storeId}` : ""}`)
         if (!response.ok) {
             setError(response.data?.message || "Failed to load store dashboard")

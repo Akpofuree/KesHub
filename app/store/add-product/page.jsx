@@ -4,8 +4,17 @@ import Image from "next/image"
 import { useState } from "react"
 import toast from "react-hot-toast"
 
-export default function StoreAddProduct() {
+async function safeJson(response) {
+    const text = await response.text()
+    if (!text) return null
+    try {
+        return JSON.parse(text)
+    } catch {
+        return null
+    }
+}
 
+export default function StoreAddProduct() {
     const categories = ['Electronics', 'Clothing', 'Home & Kitchen', 'Beauty & Health', 'Toys & Games', 'Sports & Outdoors', 'Books & Media', 'Food & Drink', 'Hobbies & Crafts', 'Others']
     const deviceStates = ['Brand New', 'Boxed', 'Unboxed', 'Second-hand', 'UK Used']
     const grades = ['A+', 'A', 'B', 'C', 'Refurbished']
@@ -29,61 +38,51 @@ export default function StoreAddProduct() {
     })
     const [loading, setLoading] = useState(false)
 
-
     const onChangeHandler = (e) => {
         setProductInfo({ ...productInfo, [e.target.name]: e.target.value })
     }
 
-    const fileToBase64 = (file) => new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => {
-            const result = reader.result || ""
-            resolve(String(result).split(",")[1] || "")
-        }
-        reader.onerror = () => reject(new Error("Failed to read file"))
-        reader.readAsDataURL(file)
-    })
-
     const onSubmitHandler = async (e) => {
         e.preventDefault()
-        const imageUrls = []
-        for (const file of Object.values(images)) {
-            if (!file) continue
-            const fileData = await fileToBase64(file)
-            const uploadResponse = await fetch("/api/upload", {
+        setLoading(true)
+        try {
+            const imageUrls = []
+            for (const file of Object.values(images)) {
+                if (!file) continue
+                const uploadForm = new FormData()
+                uploadForm.append("file", file)
+
+                const uploadResponse = await fetch("/api/upload", {
+                    method: "POST",
+                    body: uploadForm,
+                })
+                const uploadResult = await safeJson(uploadResponse)
+                if (!uploadResponse.ok) throw new Error(uploadResult?.error || "Failed to upload image")
+                imageUrls.push(uploadResult?.url)
+            }
+
+            const storesResponse = await fetch("/api/stores/status")
+            const storesResult = await safeJson(storesResponse)
+            const storeId = storesResult.data?.id
+            if (!storeId) throw new Error("No approved store found for product creation")
+
+            const productResponse = await fetch("/api/products", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    fileName: file.name,
-                    fileType: file.type,
-                    fileData,
+                    ...productInfo,
+                    mrp: Number(productInfo.mrp),
+                    price: Number(productInfo.price),
+                    images: imageUrls,
+                    storeId,
                 }),
             })
-            const uploadResult = await uploadResponse.json()
-            if (!uploadResponse.ok) throw new Error(uploadResult.message || "Failed to upload image")
-            imageUrls.push(uploadResult.data.secure_url)
+            const productResult = await safeJson(productResponse)
+            if (!productResponse.ok) throw new Error(productResult?.message || "Failed to add product")
+        } finally {
+            setLoading(false)
         }
-
-        const storesResponse = await fetch("/api/stores")
-        const storesResult = await storesResponse.json()
-        const storeId = storesResult.data?.[0]?.id
-        if (!storeId) throw new Error("No store found for product creation")
-
-        const productResponse = await fetch("/api/products", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                ...productInfo,
-                mrp: Number(productInfo.mrp),
-                price: Number(productInfo.price),
-                images: imageUrls,
-                storeId,
-            }),
-        })
-        const productResult = await productResponse.json()
-        if (!productResponse.ok) throw new Error(productResult.message || "Failed to add product")
     }
-
 
     return (
         <form onSubmit={e => toast.promise(onSubmitHandler(e), { loading: "Adding Product..." })} className="text-slate-500 mb-28">

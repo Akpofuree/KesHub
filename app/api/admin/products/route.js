@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { logActivity } from "@/lib/logActivity";
 
 export async function GET(request) {
   const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!userId)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category");
@@ -13,6 +15,7 @@ export async function GET(request) {
   const limit = parseInt(searchParams.get("limit") || "20");
 
   const where = {
+    deletedAt: null,
     ...(category && { category }),
     ...(search && {
       OR: [
@@ -40,12 +43,16 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const { userId } = await auth();
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await request.json();
     const images = Array.isArray(body.images) ? body.images : [];
 
-    const slug = body.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.random().toString(36).substring(2, 8);
+    const slug =
+      body.name.toLowerCase().replace(/[^a-z0-9]+/g, "-") +
+      "-" +
+      Math.random().toString(36).substring(2, 8);
     const condition = body.condition || null;
     const simStatus = body.simStatus || null;
     const storageType = body.storageType || null;
@@ -64,9 +71,20 @@ export async function POST(request) {
       },
     });
 
+    await logActivity({
+      userId,
+      action: "CREATE",
+      entityType: "Product",
+      entityId: product.id,
+      metadata: { productName: product.name, slug: product.slug },
+    });
+
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
     console.error("Product creation error:", error);
-    return NextResponse.json({ error: error.message || "Failed to create product" }, { status: 500 });
+    return NextResponse.json(
+      { error: error.message || "Failed to create product" },
+      { status: 500 },
+    );
   }
 }

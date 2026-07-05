@@ -61,7 +61,7 @@ export async function POST(request) {
             paymentMethod: "PAYSTACK",
         });
 
-        return ok({ orderId: order.id, total: order.total }, { status: 201 });
+        return ok({ orderId: order.id, total: order.totalAmount }, { status: 201 });
     } catch (error) {
         if (error instanceof z.ZodError) {
             return fail("Invalid order payload", 400, error.flatten());

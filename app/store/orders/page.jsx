@@ -4,6 +4,16 @@ import Loading from "@/components/Loading"
 import toast from "react-hot-toast"
 import { fetchJson } from "@/lib/fetch-json"
 
+async function safeJson(response) {
+    const text = await response.text()
+    if (!text) return null
+    try {
+        return JSON.parse(text)
+    } catch {
+        return null
+    }
+}
+
 export default function StoreOrders() {
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(true)
@@ -13,14 +23,19 @@ export default function StoreOrders() {
 
 
     const fetchOrders = async () => {
-       const storesResponse = await fetchJson("/api/stores")
+       const storesResponse = await fetchJson("/api/stores/status")
        if (!storesResponse.ok) {
            setError(storesResponse.data?.message || "Failed to load orders")
            setLoading(false)
            return
        }
-       const storeId = storesResponse.data?.data?.[0]?.id
-       const response = await fetchJson(`/api/orders/store${storeId ? `?storeId=${storeId}` : ""}`)
+       const storeId = storesResponse.data?.data?.id
+       if (!storeId) {
+           setError("No approved store found for your account")
+           setLoading(false)
+           return
+       }
+       const response = await fetchJson(`/api/orders/store?storeId=${storeId}`)
        if (!response.ok) {
            setError(response.data?.message || "Failed to load orders")
            setLoading(false)
@@ -36,9 +51,9 @@ export default function StoreOrders() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ orderId, status }),
         })
-        const result = await response.json()
-        if (!response.ok) throw new Error(result.message || "Failed to update order")
-        setOrders((prev) => prev.map((order) => order.id === orderId ? result.data : order))
+        const result = await safeJson(response)
+        if (!response.ok) throw new Error(result?.message || "Failed to update order")
+        setOrders((prev) => prev.map((order) => order.id === orderId ? result?.data : order))
     }
 
     const openModal = (order) => {
@@ -84,7 +99,7 @@ export default function StoreOrders() {
                                         {index + 1}
                                     </td>
                                     <td className="px-4 py-3">{order.user?.name}</td>
-                                    <td className="px-4 py-3 font-medium text-slate-800">${order.total}</td>
+                                    <td className="px-4 py-3 font-medium text-slate-800">${order.totalAmount}</td>
                                     <td className="px-4 py-3">{order.paymentMethod}</td>
                                     <td className="px-4 py-3">
                                         {order.isCouponUsed ? (

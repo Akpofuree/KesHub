@@ -6,6 +6,16 @@ import { ArrowRightIcon } from "lucide-react"
 import SellerNavbar from "./StoreNavbar"
 import SellerSidebar from "./StoreSidebar"
 
+async function safeJson(response) {
+    const text = await response.text()
+    if (!text) return null
+    try {
+        return JSON.parse(text)
+    } catch {
+        return null
+    }
+}
+
 const StoreLayout = ({ children }) => {
 
 
@@ -14,10 +24,10 @@ const StoreLayout = ({ children }) => {
     const [storeInfo, setStoreInfo] = useState(null)
 
     const fetchIsSeller = async () => {
-        const response = await fetch("/api/stores")
-        const result = await response.json()
-        const store = result.data?.[0] || null
-        setIsSeller(Boolean(store))
+        const response = await fetch("/api/stores/status")
+        const result = await safeJson(response)
+        const store = result.data || null
+        setIsSeller(Boolean(store && store.status === "approved"))
         setStoreInfo(store)
         setLoading(false)
     }
@@ -40,10 +50,18 @@ const StoreLayout = ({ children }) => {
         </div>
     ) : (
         <div className="min-h-screen flex flex-col items-center justify-center text-center px-6">
-            <h1 className="text-2xl sm:text-4xl font-semibold text-slate-400">You are not authorized to access this page</h1>
-            <Link href="/" className="bg-slate-700 text-white flex items-center gap-2 mt-8 p-2 px-6 max-sm:text-sm rounded-full">
-                Go to home <ArrowRightIcon size={18} />
-            </Link>
+            <h1 className="text-2xl sm:text-4xl font-semibold text-slate-400">Your store is not live yet</h1>
+            <p className="mt-4 max-w-xl text-slate-500">
+                Submit your store application first, then come back here after approval.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Link href="/create-store" className="bg-slate-700 text-white flex items-center gap-2 p-2 px-6 max-sm:text-sm rounded-full">
+                  Create store <ArrowRightIcon size={18} />
+              </Link>
+              <Link href="/" className="border border-slate-300 text-slate-700 flex items-center gap-2 p-2 px-6 max-sm:text-sm rounded-full">
+                  Go to home <ArrowRightIcon size={18} />
+              </Link>
+            </div>
         </div>
     )
 }

@@ -27,7 +27,7 @@ const steps = [
 
 export default function Timeline() {
   return (
-    <section className="py-24 sm:py-28 lg:py-36 bg-slate-50">
+    <section className="block lg:hidden py-24 sm:py-28 lg:py-36 bg-slate-50">
       <div className="max-w-7xl mx-auto px-6 flex justify-center">
         <div className="receipt-card w-full max-w-[420px] bg-white rounded-[28px] shadow-[0_20px_60px_rgba(15,23,42,0.12)] px-6 py-8 sm:px-8 sm:py-10 border border-slate-200">
           <div className="text-center pb-6 border-b border-dashed border-slate-300">

@@ -9,7 +9,7 @@ export async function GET(_request, { params }) {
             where: { username },
             include: {
                 user: true,
-                Product: {
+                products: {
                     include: {
                         store: true,
                         rating: true,

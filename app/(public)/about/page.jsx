@@ -1,9 +1,10 @@
 import Hero from "@/components/about/Hero";
+import HowWeWork from "@/components/about/HowWeWork";
 import Story from "@/components/about/Story";
 import Values from "@/components/about/Values";
 import StickyFounder from "@/components/about/StickyFounder";
 import Testimonials from "@/components/about/Testimonials";
-import Timeline from "@/components/about/Timeline";
+
 import Stats from "@/components/about/Stats";
 import FAQ from "@/components/about/FAQ";
 import CTA from "@/components/about/CTA";
@@ -16,8 +17,10 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="bg-slate-50 overflow-x-hidden relative">
+    <main className="bg-slate-50 overflow-clip relative">
       <Hero />
+
+      <HowWeWork />
 
       <Story />
 
@@ -26,8 +29,6 @@ export default function AboutPage() {
       <StickyFounder />
 
       <Testimonials />
-
-      <Timeline />
 
       <Stats />
 

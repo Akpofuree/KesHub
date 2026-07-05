@@ -8,8 +8,6 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// --- ENUMS --------------------------------------------------------------------
-
 enum Category {
   PHONES
   LAPTOPS
@@ -29,6 +27,14 @@ enum Condition {
   GRADE_C
 }
 
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
 enum SimStatus {
   UNLOCKED
   LOCKED
@@ -41,109 +47,257 @@ enum StorageType {
   SSD_HDD_COMBO
 }
 
-enum OrderStatus {
-  PENDING
-  CONFIRMED
-  SHIPPED
-  DELIVERED
-  CANCELLED
+enum ActivityAction {
+  CREATE
+  UPDATE
+  DELETE
+  APPROVE
+  REJECT
+  RESTORE
 }
 
-// --- MODELS -------------------------------------------------------------------
+model User {
+  id            String       @id
+  name          String
+  email         String       @unique
+  image         String
+  role          String       @default("BUYER")
+  password      String?
+  cart          String       @default("{}")
+  emailVerified DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  ratings       Rating[]
+  address       Address[]
+  store         Store?
+  accounts      Account[]
+  sessions      Session[]
+  activityLogs  ActivityLog[]
+  orders        Order[]
+}
 
 model Product {
-  id            String      @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String
-  slug          String      @unique
+  slug          String         @unique
   description   String
   price         Float
   comparePrice  Float?
-  stock         Int         @default(0)
+  stock         Int            @default(0)
   images        String[]
   brand         String
   model         String?
   category      Category
-  isSecondhand  Boolean     @default(false)
-  isFeatured    Boolean     @default(false)
-  isActive      Boolean     @default(true)
-
-  // -- Condition & Secondhand Fields --
+  isSecondhand  Boolean        @default(false)
+  isFeatured    Boolean        @default(false)
+  isActive      Boolean        @default(true)
   condition     Condition?
   simStatus     SimStatus?
-
-  // -- Phone-Specific Fields --
   storage       String?
   ram           String?
   color         String?
   network       String?
   batteryHealth String?
-
-  // -- Laptop-Specific Fields --
   processor     String?
   screenSize    String?
   storageType   StorageType?
   os            String?
   laptopBattery String?
   graphics      String?
+  storeId       String?
+  deletedAt     DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-
-  // Relations
-  cartItems     CartItem[]
-  wishlistItems WishlistItem[]
+  store         Store?         @relation(fields: [storeId], references: [id], onDelete: SetNull)
+  CartItem      CartItem[]
   orderItems    OrderItem[]
-}
-
-model Cart {
-  id        String     @id @default(cuid())
-  sessionId String     @unique
-  items     CartItem[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-}
-
-model CartItem {
-  id        String   @id @default(cuid())
-  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  cartId    String
-  product   Product  @relation(fields: [productId], references: [id])
-  productId String
-  quantity  Int      @default(1)
-  createdAt DateTime @default(now())
-
-  @@unique([cartId, productId])
-}
-
-model WishlistItem {
-  id        String   @id @default(cuid())
-  sessionId String
-  product   Product  @relation(fields: [productId], references: [id])
-  productId String
-  createdAt DateTime @default(now())
-
-  @@unique([sessionId, productId])
+  WishlistItem  WishlistItem[]
+  rating        Rating[]
+  productHistory ProductHistory[]
 }
 
 model Order {
   id            String      @id @default(cuid())
+  userId        String?
   customerName  String
   customerEmail String
   customerPhone String
   address       String
   totalAmount   Float
   status        OrderStatus @default(PENDING)
-  items         OrderItem[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+  orderItems    OrderItem[]
+
+  user          User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Buyer relation only; seller/store data is derived from the order items' products.
 }
 
 model OrderItem {
   id        String  @id @default(cuid())
-  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId   String
-  product   Product @relation(fields: [productId], references: [id])
   productId String
   quantity  Int
   price     Float
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Rating {
+  id        String   @id @default(cuid())
+  rating    Int
+  review    String
+  userId    String
+  productId String
+  orderId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId, orderId])
+}
+
+model Address {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  email     String
+  street    String
+  city      String
+  state     String
+  zip       String
+  country   String
+  phone     String
+  createdAt DateTime @default(now())
+
+  user  User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Coupon {
+  code        String   @id
+  description String
+  discount    Float
+  forNewUser  Boolean
+  forMember   Boolean  @default(false)
+  isPublic    Boolean
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+}
+
+model Store {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  name        String
+  description String
+  username    String   @unique
+  address     String
+  status      String   @default("pending")
+  isActive    Boolean  @default(false)
+  logo        String
+  email       String
+  contact     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products Product[]
+  user     User     @relation(fields: [userId], references: [id])
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  sessionId String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  CartItem  CartItem[]
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  productId String
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  Cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  Product   Product  @relation(fields: [productId], references: [id])
+
+  @@unique([cartId, productId])
+}
+
+model WishlistItem {
+  id        String   @id
+  sessionId String
+  productId String
+  createdAt DateTime @default(now())
+  Product   Product  @relation(fields: [productId], references: [id])
+
+  @@unique([sessionId, productId])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ActivityLog {
+  id         String         @id @default(cuid())
+  userId     String?
+  action     ActivityAction
+  entityType String
+  entityId   String
+  metadata   Json?
+  createdAt  DateTime       @default(now())
+
+  user       User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model ProductHistory {
+  id        String   @id @default(cuid())
+  productId String
+  editedBy  String?
+  snapshot  Json
+  createdAt DateTime @default(now())
+
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
