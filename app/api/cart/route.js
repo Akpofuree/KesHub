@@ -28,10 +28,18 @@ export async function POST(request) {
 
   const updated = await prisma.cart.findUnique({
     where: { id: cart.id },
-    include: { items: { include: { product: true } } },
+    include: { CartItem: { include: { Product: true } } },
   });
 
-  return NextResponse.json(updated);
+  const formattedUpdated = {
+    ...updated,
+    items: updated.CartItem?.map(item => ({
+      ...item,
+      product: item.Product
+    })) || []
+  };
+
+  return NextResponse.json(formattedUpdated);
 }
 
 export async function DELETE(request) {
@@ -47,8 +55,16 @@ export async function DELETE(request) {
 
   const updated = await prisma.cart.findUnique({
     where: { id: cart.id },
-    include: { items: { include: { product: true } } },
+    include: { CartItem: { include: { Product: true } } },
   });
 
-  return NextResponse.json(updated);
+  const formattedUpdated = {
+    ...updated,
+    items: updated.CartItem?.map(item => ({
+      ...item,
+      product: item.Product
+    })) || []
+  };
+
+  return NextResponse.json(formattedUpdated);
 }
