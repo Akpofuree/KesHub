@@ -3,19 +3,41 @@
 import { MailIcon, MapPinIcon, PhoneIcon } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import AnimatedSubmitButton from "@/components/ui/AnimatedSubmitButton";
 
 export default function ContactPage() {
-    const [loading, setLoading] = useState(false);
+    const [status, setStatus] = useState("idle");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            setLoading(false);
+        setStatus("loading");
+        
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to send message');
+            }
+
             toast.success("Message sent successfully! We'll get back to you soon.");
             e.target.reset();
-        }, 1500);
+            setStatus("success");
+            setTimeout(() => setStatus("idle"), 2500);
+        } catch (error) {
+            toast.error(error.message || 'Something went wrong. Please try again.');
+            setStatus("idle");
+        }
     };
 
     return (
@@ -96,36 +118,36 @@ export default function ContactPage() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
                                 <div>
                                     <label htmlFor="firstName" className="block text-sm font-medium text-slate-700 mb-2">First Name</label>
-                                    <input required type="text" id="firstName" className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="John" />
+                                    <input required name="firstName" type="text" id="firstName" className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="John" />
                                 </div>
                                 <div>
                                     <label htmlFor="lastName" className="block text-sm font-medium text-slate-700 mb-2">Last Name</label>
-                                    <input required type="text" id="lastName" className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="Doe" />
+                                    <input required name="lastName" type="text" id="lastName" className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="Doe" />
                                 </div>
                             </div>
 
                             <div className="mb-6">
                                 <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
-                                <input required type="email" id="email" className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="john@example.com" />
+                                <input required name="email" type="email" id="email" className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="john@example.com" />
                             </div>
 
                             <div className="mb-6">
                                 <label htmlFor="subject" className="block text-sm font-medium text-slate-700 mb-2">Subject</label>
-                                <input required type="text" id="subject" className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="How can we help?" />
+                                <input required name="subject" type="text" id="subject" className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="How can we help?" />
                             </div>
 
                             <div className="mb-6">
                                 <label htmlFor="message" className="block text-sm font-medium text-slate-700 mb-2">Message</label>
-                                <textarea required id="message" rows="5" className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition resize-none" placeholder="Write your message here..."></textarea>
+                                <textarea required name="message" id="message" rows="5" className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition resize-none" placeholder="Write your message here..."></textarea>
                             </div>
 
-                            <button 
-                                type="submit" 
-                                disabled={loading}
-                                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg transition disabled:bg-indigo-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                            >
-                                {loading ? "Sending..." : "Send Message"}
-                            </button>
+                            <AnimatedSubmitButton 
+                                status={status}
+                                idleText="Send Message"
+                                loadingText="Sending..."
+                                successText="Message Sent!"
+                                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg disabled:bg-indigo-400 disabled:cursor-not-allowed"
+                            />
                         </form>
                     </div>
 
@@ -134,3 +156,4 @@ export default function ContactPage() {
         </div>
     );
 }
+

@@ -20,14 +20,14 @@ const values = [
 
 export default function Values() {
   return (
-    <section className="py-24 sm:py-28 lg:py-36 bg-slate-50">
+    <section className="py-16 sm:py-20 md:py-24 bg-slate-50">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-12 sm:mb-14 lg:mb-20">
+        <div className="text-center mb-12">
           <p className="uppercase tracking-[0.3em] text-emerald-600 text-sm font-semibold">
             What We Believe
           </p>
 
-          <h2 className="text-4xl sm:text-5xl font-semibold mt-3 sm:mt-4 text-slate-950">
+          <h2 className="text-4xl sm:text-5xl font-semibold mt-2 text-slate-950">
             Core Values
           </h2>
         </div>
@@ -42,11 +42,11 @@ export default function Values() {
                 <Icon className="text-emerald-600" size={38} />
               </div>
 
-              <h3 className="text-2xl sm:text-3xl font-semibold mt-6 sm:mt-8 text-slate-950">
+              <h3 className="text-2xl sm:text-3xl font-semibold mt-4 text-slate-950">
                 {title}
               </h3>
 
-              <p className="mt-4 sm:mt-6 text-slate-600 leading-7 sm:leading-8">
+              <p className="mt-2 text-slate-600 leading-snug">
                 {text}
               </p>
             </div>

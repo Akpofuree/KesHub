@@ -21,7 +21,7 @@ export const metadata = {
   title: "KES HUB - Shop smarter",
   description: "KES HUB - Shop smarter",
   icons: {
-    icon: "/assets/kes-hub-logo-light.png",
+    icon: "/favicon.png",
   },
 };
 
@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${poppins.variable} ${jetBrainsMono.variable}`}>
       <head>
-        <link rel="icon" href="/assets/kes-hub-logo-light.png" />
+        <link rel="icon" href="/favicon.png" />
       </head>
       <body className="antialiased font-sans">
         <ClerkAppProvider>

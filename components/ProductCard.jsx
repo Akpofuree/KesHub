@@ -1,7 +1,9 @@
 "use client";
 import { StarIcon, EyeIcon, HeartIcon } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 import FallbackImage from "@/components/FallbackImage";
 import { assets } from "@/assets/assets";
 import { getFirstImage } from "@/lib/utils/imageUtils";
@@ -14,6 +16,7 @@ const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const cart = useSelector((state) => state.cart.cartItems) || {};
+  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
 
   // calculate the average rating of the product
   const average = product.rating?.length
@@ -34,6 +37,33 @@ const ProductCard = ({ product }) => {
       dispatch(addToCart({ productId: product.id }));
     } else {
       router.push("/cart");
+    }
+  };
+
+  const handleAddToWishlist = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isAddingToWishlist) return;
+
+    setIsAddingToWishlist(true);
+    try {
+      const res = await fetch("/api/wishlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product.id }),
+      });
+      if (res.ok) {
+        toast.success("Added to wishlist!");
+      } else if (res.status === 401) {
+        toast.error("Please sign in to add to wishlist.");
+        router.push("/sign-in");
+      } else {
+        toast.error("Failed to add to wishlist.");
+      }
+    } catch (error) {
+      toast.error("Something went wrong.");
+    } finally {
+      setIsAddingToWishlist(false);
     }
   };
 
@@ -58,13 +88,15 @@ const ProductCard = ({ product }) => {
           >
             <EyeIcon size={18} />
           </button>
-          <button 
-            className="bg-white p-2 rounded-full shadow-md text-slate-600 hover:text-green-600 hover:bg-slate-50 transition-colors" 
+          <motion.button 
+            whileTap={{ scale: 0.9 }}
+            disabled={isAddingToWishlist}
+            className="bg-white p-2 rounded-full shadow-md text-slate-600 hover:text-green-600 hover:bg-slate-50 transition-colors disabled:opacity-50" 
             title="Add to Wishlist" 
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+            onClick={handleAddToWishlist}
           >
-            <HeartIcon size={18} />
-          </button>
+            <HeartIcon size={18} className={isAddingToWishlist ? "animate-pulse" : ""} />
+          </motion.button>
         </div>
       </div>
       

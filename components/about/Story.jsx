@@ -3,30 +3,30 @@ const story =
 
 export default function Story() {
   return (
-    <section className="py-24 sm:py-28 lg:py-36">
+    <section className="py-16 sm:py-20 md:py-24">
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-14 lg:gap-24 items-center">
         <div>
           <span className="uppercase tracking-[0.3em] text-emerald-600 text-sm font-semibold">
             Our Story
           </span>
 
-          <h2 className="text-4xl sm:text-5xl font-semibold mt-4 sm:mt-5 leading-[1.08] text-slate-950">
+          <h2 className="text-4xl sm:text-5xl font-semibold mt-2 leading-[1.08] text-slate-950">
             Building a trusted shopping experience for modern buyers.
           </h2>
 
-          <p className="mt-6 sm:mt-7 text-slate-600 leading-7 sm:leading-8 text-base sm:text-lg">
+          <p className="mt-4 text-slate-600 leading-snug text-base sm:text-lg">
             KES HUB was created to make device shopping simple, reliable and
             locally relevant. We curate technology from trusted brands and bring
             it to customers with fast delivery, clear pricing and real support.
           </p>
 
-          <p className="mt-5 sm:mt-6 text-slate-600 leading-7 sm:leading-8 text-base sm:text-lg">
+          <p className="mt-3 text-slate-600 leading-snug text-base sm:text-lg">
             From Lagos to the rest of Nigeria and beyond, our focus is on
             helping everyday shoppers find the right gadget without the
             guesswork.
           </p>
 
-          <button className="mt-8 sm:mt-10 inline-flex items-center justify-center rounded-full bg-emerald-600 px-8 py-4 text-white text-base font-semibold shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition">
+          <button className="mt-6 inline-flex items-center justify-center rounded-full bg-emerald-600 px-8 py-3 text-white text-base font-semibold shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition">
             Explore Our Story
           </button>
         </div>

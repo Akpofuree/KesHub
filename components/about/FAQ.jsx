@@ -44,14 +44,14 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
-    <section className="py-36 bg-slate-50">
+    <section className="py-16 sm:py-20 md:py-24 bg-slate-50">
       <div className="max-w-4xl mx-auto px-6">
-        <div className="text-center mb-20">
+        <div className="text-center mb-12">
           <p className="uppercase tracking-[0.4em] text-emerald-600 text-sm font-semibold">
             FAQ
           </p>
 
-          <h2 className="text-5xl font-semibold mt-6 text-slate-950">
+          <h2 className="text-4xl sm:text-5xl font-semibold mt-2 text-slate-950">
             Frequently Asked Questions
           </h2>
         </div>
@@ -76,7 +76,7 @@ export default function FAQ() {
               </button>
 
               {openIndex === index && (
-                <p className="mt-4 text-slate-700 leading-8">{faq.answer}</p>
+                <p className="mt-3 text-slate-700 leading-snug">{faq.answer}</p>
               )}
             </div>
           ))}

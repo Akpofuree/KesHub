@@ -1,8 +1,5 @@
-"use client";
-
 import Link from "next/link";
 import BrandLogo from "@/components/BrandLogo";
-import NewsletterForm from "@/components/NewsletterForm";
 
 const Footer = () => {
   const MailIcon = () => (
@@ -218,7 +215,6 @@ const Footer = () => {
                 </Link>
               ))}
             </div>
-            <NewsletterForm />
           </div>
           <div className="flex flex-wrap justify-between w-full md:w-[50%] gap-5 text-sm ">
             {linkSections.map((section, index) => (

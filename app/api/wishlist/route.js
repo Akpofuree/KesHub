@@ -30,14 +30,19 @@ export async function POST(request) {
 
   const { productId } = await request.json();
 
-  const item = await prisma.wishlistItem.upsert({
-    where: { sessionId_productId: { sessionId: userId, productId } },
-    update: {},
-    create: { sessionId: userId, productId },
-    include: { product: true },
-  });
+  try {
+    const item = await prisma.wishlistItem.upsert({
+      where: { sessionId_productId: { sessionId: userId, productId } },
+      update: {},
+      create: { id: Date.now().toString() + Math.random().toString(36).slice(2), sessionId: userId, productId },
+      include: { product: true },
+    });
 
-  return NextResponse.json(item);
+    return NextResponse.json(item);
+  } catch (error) {
+    console.error("Wishlist POST error:", error);
+    return NextResponse.json({ error: error.message, stack: error.stack }, { status: 500 });
+  }
 }
 
 export async function DELETE(request) {

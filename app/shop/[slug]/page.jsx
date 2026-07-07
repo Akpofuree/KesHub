@@ -5,13 +5,13 @@ import AddToCartButton from "@/components/shop/AddToCartButton";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-const WHATSAPP_NUMBER = "234XXXXXXXXXX"; // replace with owner's number
+const WHATSAPP_NUMBER = "2348136984770";
 
 function buildWhatsAppLink(name, price) {
   const msg = encodeURIComponent(
-    `Hello KESHUB 👋\n\nI'm interested in:\n*${name}*\nPrice: ₦${price.toLocaleString()}\n\nIs this still available?` 
+    `Hello KESHUB 👋\n\nI'm interested in:\n*${name}*\nPrice: ₦${price.toLocaleString()}\n\nIs this still available?`
   );
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+  return `https://web.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${msg}`;
 }
 
 export default async function ProductDetailPage({ params }) {

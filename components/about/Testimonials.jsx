@@ -24,16 +24,14 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="relative z-30 bg-slate-50 pt-36 pb-36">
+    <section className="relative z-30 bg-slate-50 py-16 sm:py-20 md:py-24">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-20">
-          <div className="w-24 h-1 bg-emerald-600 rounded-full mx-auto mb-8" />
-
+        <div className="text-center mb-12">
           <p className="uppercase tracking-[0.4em] text-emerald-600 text-sm font-semibold">
             Testimonials
           </p>
 
-          <h2 className="text-5xl font-semibold mt-6 text-slate-950">
+          <h2 className="text-4xl sm:text-5xl font-semibold mt-2 text-slate-950">
             What customers are saying
           </h2>
         </div>
@@ -58,7 +56,7 @@ export default function Testimonials() {
                 </div>
               </div>
 
-              <p className="mt-8 text-slate-700 leading-8">{item.text}</p>
+              <p className="mt-4 text-slate-700 leading-snug">{item.text}</p>
             </div>
           ))}
         </div>

@@ -23,9 +23,9 @@ export default function StickyFounder() {
             }}
           />
 
-          <div className="relative w-full md:w-[55%] lg:w-1/2 px-6 py-16 sm:px-8 md:px-10 md:py-24 lg:px-16 lg:py-32">
+          <div className="relative w-full md:w-[55%] lg:w-1/2 px-6 py-16 sm:px-8 md:px-10 md:py-20 lg:px-16 lg:py-24">
             <div className="md:sticky md:top-[24vh] lg:top-[30vh]">
-              <div className="mx-auto max-w-xl space-y-8 text-center md:mx-0 md:max-w-none md:text-left">
+              <div className="mx-auto max-w-xl space-y-5 text-center md:mx-0 md:max-w-none md:text-left">
                 <p className="uppercase tracking-[0.35em] text-white/80 md:text-slate-600 text-sm">
                   Founder
                 </p>
@@ -40,22 +40,23 @@ export default function StickyFounder() {
                   Business
                 </h2>
 
-                <div className="mx-auto max-w-lg space-y-6 leading-8 text-white/90 md:mx-0 md:max-w-none md:text-slate-700">
+                <div className="mx-auto max-w-lg space-y-4 leading-snug text-white/90 md:mx-0 md:max-w-none md:text-slate-700">
                   <p>
-                    KESHUB didn't start in a boardroom - it started with a simple
-                    frustration: buying a good phone or laptop in Nigeria meant
-                    choosing between paying too much or trusting too little.
+                    KESHUB didn't start in a boardroom - it started with a
+                    simple frustration: buying a good phone or laptop in Nigeria
+                    meant choosing between paying too much or trusting too
+                    little.
                   </p>
 
                   <p>
-                    We set out to fix that. Every product on KESHUB is checked for
-                    quality before it's listed, priced fairly from day one, and
-                    backed by support that actually answers.
+                    We set out to fix that. Every product on KESHUB is checked
+                    for quality before it's listed, priced fairly from day one,
+                    and backed by support that actually answers.
                   </p>
 
                   <p>
-                    This isn't just a store. It's proof that you can build something
-                    people trust - one honest transaction at a time.
+                    This isn't just a store. It's proof that you can build
+                    something people trust - one honest transaction at a time.
                   </p>
                 </div>
 
