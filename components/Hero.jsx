@@ -24,6 +24,8 @@ const Hero = () => {
           <div className="relative p-8 sm:p-16 z-10">
             <Link
               href="/shop"
+              data-aos="fade-in"
+              data-aos-duration="600"
               className="inline-flex items-center gap-3 bg-emerald-100/20 text-emerald-600 pr-4 p-1 rounded-full text-xs sm:text-sm hover:bg-emerald-100/40 transition-colors cursor-pointer"
             >
               <span className="bg-emerald-600 px-3 py-1 rounded-full text-white text-xs">
@@ -35,19 +37,36 @@ const Hero = () => {
                 size={16}
               />
             </Link>
-            <h2 className="text-4xl sm:text-5xl leading-[1.1] my-3 font-semibold max-w-xl">
+            <h2
+              className="text-4xl sm:text-5xl leading-[1.1] my-3 font-semibold max-w-xl"
+              data-aos="fade-right"
+              data-aos-duration="800"
+              data-aos-delay="100"
+            >
               Quality tech. Priced like it should be.
             </h2>
-            <p className="text-slate-300 text-base sm:text-lg max-w-2xl leading-8">
-              Curated smartphones, laptops, and accessories. Priced for
-              quality, priced for you.
+            <p
+              className="text-slate-300 text-base sm:text-lg max-w-2xl leading-8"
+              data-aos="fade-right"
+              data-aos-duration="800"
+              data-aos-delay="200"
+            >
+              Curated smartphones, laptops, and accessories. Priced for quality,
+              priced for you.
             </p>
-            <div className="text-slate-200 text-sm sm:text-base font-medium mt-4 sm:mt-8">
+            <div
+              className="text-slate-200 text-sm sm:text-base font-medium mt-4 sm:mt-8"
+              data-aos="fade-up"
+              data-aos-duration="800"
+              data-aos-delay="300"
+            >
               <p>No hidden fees. No inflated prices.</p>
-              <p className="text-4xl font-semibold">{currency}4.90</p>
             </div>
             <Link
               href="/about"
+              data-aos="fade-up"
+              data-aos-duration="800"
+              data-aos-delay="400"
               className="inline-block self-center sm:self-start bg-emerald-600 text-white text-sm py-3 px-8 mt-6 rounded-full hover:bg-emerald-700 transition"
             >
               Learn More
@@ -57,12 +76,18 @@ const Hero = () => {
             className="sm:absolute bottom-0 right-0 md:right-10 w-full sm:max-w-sm relative z-10"
             src={assets.hero_model_img}
             alt=""
+            data-aos="fade-left"
+            data-aos-duration="900"
+            data-aos-delay="300"
           />
         </div>
         <div className="flex flex-col md:flex-row xl:flex-col gap-5 w-full xl:max-w-sm text-sm text-slate-700">
           <div
             className="flex-1 flex flex-col items-start justify-between gap-6 w-full bg-slate-50 border border-slate-200 rounded-[32px] p-6 px-8 hover:border-emerald-300 transition duration-300 cursor-pointer"
             onClick={scrollToBestSelling}
+            data-aos="fade-up"
+            data-aos-duration="800"
+            data-aos-delay="100"
           >
             <div className="flex-1">
               <p className="text-3xl font-semibold text-slate-950">
@@ -79,6 +104,9 @@ const Hero = () => {
           <Link
             href="/shop?minPrice=0&maxPrice=50"
             className="flex-1 flex flex-col items-start justify-between gap-4 w-full bg-slate-50 border border-slate-200 rounded-[32px] p-6 px-8 hover:border-emerald-300 transition duration-300"
+            data-aos="fade-up"
+            data-aos-duration="800"
+            data-aos-delay="200"
           >
             <div>
               <p className="text-2xl sm:text-3xl font-semibold text-slate-950">

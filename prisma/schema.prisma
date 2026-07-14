@@ -310,3 +310,14 @@ model NewsletterSubscriber {
   createdAt        DateTime  @default(now())
   unsubscribedAt   DateTime?
 }
+
+model FailedEmail {
+  id        String   @id @default(cuid())
+  recipient String
+  subject   String
+  payload   Json
+  createdAt DateTime @default(now())
+
+  @@index([recipient])
+  @@index([createdAt])
+}

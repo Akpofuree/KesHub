@@ -21,7 +21,11 @@ const Navbar = () => {
   const cartCount = useSelector((state) => state.cart.total);
   const hasClerkKey = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
   const { user } = useUser();
-  const role = user?.unsafeMetadata?.role;
+  // Check if user is admin via Clerk Organizations (not unsafeMetadata)
+  const isOrgAdmin = user?.organizationMemberships?.some(
+    (org) => org.role === "org:admin",
+  );
+  const role = isOrgAdmin ? "ADMIN" : user?.unsafeMetadata?.role;
   const dashboardHref =
     role === "ADMIN" ? "/admin" : role === "SELLER" ? "/store" : null;
   const dashboardLabel = role === "ADMIN" ? "Admin dashboard" : "Dashboard";
@@ -51,10 +55,25 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="relative bg-white border-b border-gray-200">
+    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
       <div className="mx-6">
         <div className="flex items-center justify-between max-w-7xl mx-auto py-4 gap-4 md:gap-8 transition-all">
-          {/* Logo - Left */}
+          {/* Mobile Hamburger - Left (md:hidden) */}
+          <div className="md:hidden order-first">
+            <button
+              className="p-1"
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? (
+                <X className="w-6 h-6 text-slate-600" />
+              ) : (
+                <Menu className="w-6 h-6 text-slate-600" />
+              )}
+            </button>
+          </div>
+
+          {/* Logo - Center/Left after hamburger on mobile */}
           <Link href="/" className="relative flex-shrink-0">
             <BrandLogo
               showWordmark={false}
@@ -163,7 +182,7 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Actions */}
-          <div className="md:hidden flex items-center gap-4">
+          <div className="md:hidden flex items-center gap-4 ml-auto">
             <Link
               href="/wishlist"
               className="relative flex items-center text-slate-600"
@@ -186,17 +205,6 @@ const Navbar = () => {
                 <UserButton afterSignOutUrl="/" />
               </SignedIn>
             ) : null}
-            <button
-              className="p-1"
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label="Toggle menu"
-            >
-              {menuOpen ? (
-                <X className="w-6 h-6 text-slate-600" />
-              ) : (
-                <Menu className="w-6 h-6 text-slate-600" />
-              )}
-            </button>
           </div>
         </div>
       </div>
@@ -205,11 +213,11 @@ const Navbar = () => {
       {/* Mobile Drawer */}
       {menuOpen && (
         <div
-          className="md:hidden fixed inset-0 z-50 bg-black/50"
+          className="md:hidden fixed inset-0 z-40 bg-black/50"
           onClick={() => setMenuOpen(false)}
         >
           <div
-            className="absolute top-0 right-0 h-full w-72 bg-white shadow-xl p-6"
+            className="absolute top-0 left-0 h-full w-72 bg-white shadow-xl p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <button onClick={() => setMenuOpen(false)} className="mb-6">

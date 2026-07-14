@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
-import { prisma } from "@/lib/prisma";
 import { fail, ok } from "../../_lib/response";
+import { withRlsContext } from "@/lib/rls";
 
 export async function GET() {
   try {
@@ -9,10 +9,12 @@ export async function GET() {
       return fail("Unauthorized", 401);
     }
 
-    const store = await prisma.store.findUnique({
-      where: { userId },
-      include: { user: true },
-    });
+    const store = await withRlsContext({ userId }, async (tx) =>
+      tx.store.findUnique({
+        where: { userId },
+        include: { user: true },
+      })
+    );
 
     return ok(store);
   } catch {

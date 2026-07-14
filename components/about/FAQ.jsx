@@ -46,7 +46,11 @@ export default function FAQ() {
   return (
     <section className="py-16 sm:py-20 md:py-24 bg-slate-50">
       <div className="max-w-4xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div
+          className="text-center mb-12"
+          data-aos="fade-up"
+          data-aos-duration="700"
+        >
           <p className="uppercase tracking-[0.4em] text-emerald-600 text-sm font-semibold">
             FAQ
           </p>
@@ -61,6 +65,9 @@ export default function FAQ() {
             <div
               key={index}
               className="rounded-3xl bg-white p-6 sm:p-8 shadow-md shadow-slate-200/50"
+              data-aos="fade-up"
+              data-aos-duration="700"
+              data-aos-delay={index * 50}
             >
               <button
                 type="button"

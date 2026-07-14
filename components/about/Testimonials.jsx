@@ -26,7 +26,11 @@ export default function Testimonials() {
   return (
     <section className="relative z-30 bg-slate-50 py-16 sm:py-20 md:py-24">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div
+          className="text-center mb-12"
+          data-aos="fade-up"
+          data-aos-duration="700"
+        >
           <p className="uppercase tracking-[0.4em] text-emerald-600 text-sm font-semibold">
             Testimonials
           </p>
@@ -37,10 +41,13 @@ export default function Testimonials() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {testimonials.map((item) => (
+          {testimonials.map((item, index) => (
             <div
               key={item.name}
               className="rounded-[32px] border border-slate-200 bg-white/90 p-8 shadow-lg shadow-slate-200/50"
+              data-aos="zoom-in"
+              data-aos-duration="700"
+              data-aos-delay={index * 100}
             >
               <div className="flex items-center gap-4">
                 <img

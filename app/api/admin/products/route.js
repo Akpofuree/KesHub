@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { logActivity } from "@/lib/logActivity";
+import {
+  invalidateCategoryListings,
+  invalidateHomepageData,
+  invalidateProductListings,
+} from "@/lib/cache";
 
 export async function GET(request) {
   const { userId } = await auth();
@@ -78,6 +83,10 @@ export async function POST(request) {
       entityId: product.id,
       metadata: { productName: product.name, slug: product.slug },
     });
+
+    await invalidateProductListings(product.category);
+    await invalidateCategoryListings();
+    await invalidateHomepageData();
 
     return NextResponse.json(product, { status: 201 });
   } catch (error) {

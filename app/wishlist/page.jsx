@@ -71,10 +71,13 @@ export default function WishlistPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {items.map((item) => (
+          {items.map((item, index) => (
             <div
               key={item.id}
               className="rounded-3xl border border-slate-200 bg-white overflow-hidden shadow-sm"
+              data-aos="fade-up"
+              data-aos-duration="700"
+              data-aos-delay={Math.min(index * 50, 300)}
             >
               <div className="aspect-square bg-slate-50">
                 <img

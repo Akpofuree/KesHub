@@ -39,7 +39,11 @@ const Newsletter = () => {
   };
 
   return (
-    <div className="flex flex-col items-center mx-4 my-36 px-2 sm:px-0">
+    <div
+      className="flex flex-col items-center mx-4 my-36 px-2 sm:px-0"
+      data-aos="fade-up"
+      data-aos-duration="800"
+    >
       <Title
         title="Never miss a drop."
         description="Get first access to new arrivals, price drops, and gadget guides — straight to your inbox, no spam."

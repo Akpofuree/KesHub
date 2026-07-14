@@ -24,7 +24,11 @@ const createOrderSchema = z.object({
 });
 
 export async function GET() {
-    const orders = await listOrders();
+    const { userId } = await auth();
+    if (!userId) {
+        return fail("Unauthorized", 401);
+    }
+    const orders = await listOrders({ userId });
     return ok(orders);
 }
 
@@ -32,7 +36,11 @@ export async function PATCH(request) {
     try {
         const body = await request.json();
         const { orderId, status } = orderStatusSchema.parse(body);
-        const order = await updateOrderStatus(orderId, status);
+        const { userId } = await auth();
+        if (!userId) {
+            return fail("Unauthorized", 401);
+        }
+        const order = await updateOrderStatus(orderId, status, { userId });
         return ok(order);
     } catch (error) {
         if (error instanceof z.ZodError) {
@@ -52,6 +60,7 @@ export async function POST(request) {
         const body = await request.json();
         const { customerName, customerEmail, customerPhone, address, cartItems, total } = createOrderSchema.parse(body);
         const order = await createOrder({
+            userId,
             customerName,
             customerEmail,
             customerPhone,

@@ -1,6 +1,7 @@
 import { fail, ok } from "../../../_lib/response";
 import { updateProductStock } from "@/lib/services/product.service";
 import { z } from "zod";
+import { invalidateHomepageData, invalidateProductListings } from "@/lib/cache";
 
 const stockSchema = z.object({
     inStock: z.coerce.boolean(),
@@ -11,6 +12,8 @@ export async function PATCH(request, { params }) {
         const body = await request.json();
         const { inStock } = stockSchema.parse(body);
         const product = await updateProductStock(params.productId, inStock);
+        await invalidateProductListings();
+        await invalidateHomepageData();
         return ok(product);
     } catch (error) {
         if (error instanceof z.ZodError) {
@@ -19,4 +22,3 @@ export async function PATCH(request, { params }) {
         return fail("Failed to update product stock", 500);
     }
 }
-

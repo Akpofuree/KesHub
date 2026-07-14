@@ -4,10 +4,16 @@ import { storeCreateSchema } from "@/lib/validators/store";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { withRlsContext } from "@/lib/rls";
 
 export async function GET() {
   try {
-    const stores = await listStores();
+    const { userId } = await auth();
+    if (!userId) {
+      return fail("Unauthorized", 401);
+    }
+
+    const stores = await listStores({ userId });
     return ok(stores);
   } catch {
     return fail("Failed to load stores", 500);
@@ -25,9 +31,11 @@ export async function POST(request) {
     const data = storeCreateSchema.parse({ ...body, userId });
 
     // Check if user exists in database, if not create them
-    const existingUser = await prisma.user.findUnique({
-      where: { id: userId },
-    });
+    const existingUser = await withRlsContext({ userId }, async (tx) =>
+      tx.user.findUnique({
+        where: { id: userId },
+      })
+    );
 
     if (!existingUser) {
       const clerkUser = await fetch(
@@ -43,28 +51,32 @@ export async function POST(request) {
         (e) => e.id === clerkUser.primary_email_address_id,
       )?.email_address;
 
-      await prisma.user.create({
-        data: {
-          id: userId,
-          email:
-            primaryEmail || clerkUser.email_addresses?.[0]?.email_address || "",
-          name:
-            `${clerkUser.first_name || ""} ${clerkUser.last_name || ""}`.trim() ||
-            "User",
-          image: clerkUser.image_url || "",
-          role: "BUYER",
-        },
-      });
+      await withRlsContext({ userId }, async (tx) =>
+        tx.user.create({
+          data: {
+            id: userId,
+            email:
+              primaryEmail || clerkUser.email_addresses?.[0]?.email_address || "",
+            name:
+              `${clerkUser.first_name || ""} ${clerkUser.last_name || ""}`.trim() ||
+              "User",
+            image: clerkUser.image_url || "",
+            role: "BUYER",
+          },
+        })
+      );
     }
 
-    const existingStore = await prisma.store.findUnique({
-      where: { userId },
-    });
+    const existingStore = await withRlsContext({ userId }, async (tx) =>
+      tx.store.findUnique({
+        where: { userId },
+      })
+    );
     if (existingStore) {
       return fail("You already have a store application", 409);
     }
 
-    const store = await createStore(data);
+    const store = await createStore(data, { userId });
     return ok(store, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {

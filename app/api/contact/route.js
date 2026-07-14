@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { Resend } from "resend";
+import { prisma } from "@/lib/prisma";
+import { createResendBreaker, sendResendEmailWithFallback } from "@/lib/resend-email";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+const resendBreaker = createResendBreaker(resend);
 
 const contactSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -28,7 +31,7 @@ export async function POST(request) {
     const adminEmail = process.env.ADMIN_EMAIL || "akpofurediegbe@gmail.com";
 
     // Send email to admin
-    await resend.emails.send({
+    const payload = {
       from: "KESHUB Contact <onboarding@resend.dev>",
       to: adminEmail,
       subject: `New Contact Message: ${subject}`,
@@ -47,13 +50,22 @@ export async function POST(request) {
           <p style="color: #9ca3af; font-size: 12px; text-align: center;">This message was sent from the KESHUB contact page.</p>
         </div>
       `,
-      replyTo: email, // This allows the admin to reply directly to the customer
-    });
+      replyTo: email,
+    };
+
+    await sendResendEmailWithFallback(resendBreaker, payload, adminEmail);
 
     return NextResponse.json({
       message: "Message sent successfully!",
     });
   } catch (error) {
+    if (error?.code === "EOPENBREAKER" || error?.code === "ETIMEDOUT") {
+      return NextResponse.json(
+        { error: "Email service temporarily unavailable" },
+        { status: 503 }
+      );
+    }
+
     console.error("Contact form error:", error);
     return NextResponse.json(
       { error: "Internal server error" },

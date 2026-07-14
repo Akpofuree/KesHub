@@ -34,7 +34,7 @@ export default function Team() {
   return (
     <section className="py-36 bg-white">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center">
+        <div className="text-center" data-aos="fade-up" data-aos-duration="700">
           <p className="uppercase tracking-[8px] text-orange-500">
             Meet Our Team
           </p>
@@ -43,10 +43,13 @@ export default function Team() {
         </div>
 
         <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-8 mt-20">
-          {team.map((member) => (
+          {team.map((member, index) => (
             <div
               key={member.name}
               className="group overflow-hidden rounded-[30px] bg-white shadow-xl"
+              data-aos="fade-up"
+              data-aos-duration="700"
+              data-aos-delay={index * 100}
             >
               <div className="overflow-hidden">
                 <img

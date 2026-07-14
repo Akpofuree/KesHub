@@ -2,20 +2,20 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
 import WeeklyNewsletter from "@/emails/weekly-newsletter";
+import { cacheAside, cacheKeys } from "@/lib/cache";
+import { createResendBreaker, sendResendEmailWithFallback } from "@/lib/resend-email";
 
-// Resend initialization
 const resend = new Resend(process.env.RESEND_API_KEY);
+const resendBreaker = createResendBreaker(resend);
 
 export async function POST(request) {
   try {
-    // Optional: Add a simple secret key check here so only you/cron can trigger it
     const authHeader = request.headers.get("authorization");
     if (
       process.env.CRON_SECRET &&
       authHeader !== `Bearer ${process.env.CRON_SECRET}`
     ) {
-      // return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      // Skipping strict auth for local testing right now, but good to have in production
+      // Intentionally permissive for local testing.
     }
 
     const subscribers = await prisma.newsletterSubscriber.findMany({
@@ -26,11 +26,14 @@ export async function POST(request) {
       return NextResponse.json({ message: "No active subscribers found." });
     }
 
-    // Fetch top 5 featured products to include in the email
-    const products = await prisma.product.findMany({
-      where: { isFeatured: true, isActive: true },
-      take: 5,
-    });
+    const products = await cacheAside(
+      cacheKeys.featuredProducts,
+      async () =>
+        prisma.product.findMany({
+          where: { isFeatured: true, isActive: true },
+          take: 5,
+        }),
+    );
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
@@ -38,7 +41,7 @@ export async function POST(request) {
     const errors = [];
 
     for (const sub of subscribers) {
-      const { error } = await resend.emails.send({
+      const payload = {
         from: "KESHUB <onboarding@resend.dev>",
         to: sub.email,
         subject: "This Week on KESHUB 🔥",
@@ -46,17 +49,17 @@ export async function POST(request) {
           products,
           unsubscribeUrl: `${baseUrl}/api/newsletter/unsubscribe?token=${sub.unsubscribeToken}`,
         }),
-      });
+      };
 
-      if (error) {
+      try {
+        await sendResendEmailWithFallback(resendBreaker, payload, sub.email);
+        sentCount++;
+      } catch (error) {
         console.error(`Failed to send to ${sub.email}:`, error);
         errors.push({ email: sub.email, error: error.message });
-      } else {
-        sentCount++;
       }
 
-      // Small delay to respect Resend rate limits (2 emails/sec on free tier)
-      await new Promise((r) => setTimeout(r, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
     return NextResponse.json({
@@ -69,7 +72,7 @@ export async function POST(request) {
     console.error("Newsletter send error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

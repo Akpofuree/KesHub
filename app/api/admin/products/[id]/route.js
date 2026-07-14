@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { logActivity } from "@/lib/logActivity";
+import {
+  invalidateCategoryListings,
+  invalidateHomepageData,
+  invalidateProductListings,
+} from "@/lib/cache";
 
 export async function GET(_, { params }) {
   const product = await prisma.product.findUnique({ where: { id: params.id } });
@@ -23,6 +28,7 @@ export async function PUT(request, { params }) {
   });
   if (!existingProduct)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const previousCategory = existingProduct.category;
 
   const product = await prisma.product.update({
     where: { id: params.id },
@@ -51,6 +57,12 @@ export async function PUT(request, { params }) {
     metadata: { productName: product.name, slug: product.slug },
   });
 
+  await invalidateProductListings(previousCategory);
+  if (product.category !== previousCategory)
+    await invalidateProductListings(product.category);
+  await invalidateCategoryListings();
+  await invalidateHomepageData();
+
   return NextResponse.json(product);
 }
 
@@ -71,6 +83,10 @@ export async function DELETE(_, { params }) {
     entityId: product.id,
     metadata: { productName: product.name, slug: product.slug },
   });
+
+  await invalidateProductListings(product.category);
+  await invalidateCategoryListings();
+  await invalidateHomepageData();
 
   return NextResponse.json({ success: true });
 }

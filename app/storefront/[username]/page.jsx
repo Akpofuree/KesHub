@@ -2,7 +2,14 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { Store, ShoppingBag, MapPin, Mail, Phone, ArrowRight } from "lucide-react";
+import {
+  Store,
+  ShoppingBag,
+  MapPin,
+  Mail,
+  Phone,
+  ArrowRight,
+} from "lucide-react";
 
 export default async function PublicStorePage({ params }) {
   const { username } = await params;
@@ -43,7 +50,9 @@ export default async function PublicStorePage({ params }) {
                   {store.name}
                 </h1>
                 <p className="mt-1 text-slate-500">@{store.username}</p>
-                <p className="mt-4 max-w-2xl text-slate-600">{store.description}</p>
+                <p className="mt-4 max-w-2xl text-slate-600">
+                  {store.description}
+                </p>
               </div>
             </div>
 
@@ -92,11 +101,14 @@ export default async function PublicStorePage({ params }) {
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {store.products.map((product) => (
+              {store.products.map((product, index) => (
                 <Link
                   key={product.id}
                   href={`/shop/${product.slug}`}
                   className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md"
+                  data-aos="fade-up"
+                  data-aos-duration="700"
+                  data-aos-delay={Math.min(index * 50, 300)}
                 >
                   <div className="aspect-square bg-slate-50">
                     <Image

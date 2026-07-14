@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { withRlsContext } from "@/lib/rls";
 
 export async function GET(request) {
   const { userId } = await auth();
@@ -10,18 +10,27 @@ export async function GET(request) {
   const productId = searchParams.get("productId");
 
   if (productId) {
-    const item = await prisma.wishlistItem.findUnique({
-      where: { sessionId_productId: { sessionId: userId, productId } },
-    });
+    const item = await withRlsContext({ userId }, async (tx) =>
+      tx.wishlistItem.findUnique({
+        where: { sessionId_productId: { sessionId: userId, productId } },
+      })
+    );
     return NextResponse.json({ exists: !!item });
   }
 
-  const wishlist = await prisma.wishlistItem.findMany({
-    where: { sessionId: userId },
-    include: { product: true },
-    orderBy: { createdAt: "desc" },
-  });
-  return NextResponse.json(wishlist);
+  const wishlist = await withRlsContext({ userId }, async (tx) =>
+    tx.wishlistItem.findMany({
+      where: { sessionId: userId },
+      include: { Product: true },
+      orderBy: { createdAt: "desc" },
+    })
+  );
+  return NextResponse.json(
+    wishlist.map((item) => ({
+      ...item,
+      product: item.Product,
+    }))
+  );
 }
 
 export async function POST(request) {
@@ -31,14 +40,19 @@ export async function POST(request) {
   const { productId } = await request.json();
 
   try {
-    const item = await prisma.wishlistItem.upsert({
-      where: { sessionId_productId: { sessionId: userId, productId } },
-      update: {},
-      create: { id: Date.now().toString() + Math.random().toString(36).slice(2), sessionId: userId, productId },
-      include: { product: true },
-    });
+    const item = await withRlsContext({ userId }, async (tx) =>
+      tx.wishlistItem.upsert({
+        where: { sessionId_productId: { sessionId: userId, productId } },
+        update: {},
+        create: { id: Date.now().toString() + Math.random().toString(36).slice(2), sessionId: userId, productId },
+        include: { Product: true },
+      })
+    );
 
-    return NextResponse.json(item);
+    return NextResponse.json({
+      ...item,
+      product: item.Product,
+    });
   } catch (error) {
     console.error("Wishlist POST error:", error);
     return NextResponse.json({ error: error.message, stack: error.stack }, { status: 500 });
@@ -51,9 +65,11 @@ export async function DELETE(request) {
 
   const { productId } = await request.json();
 
-  await prisma.wishlistItem.delete({
-    where: { sessionId_productId: { sessionId: userId, productId } },
-  });
+  await withRlsContext({ userId }, async (tx) =>
+    tx.wishlistItem.delete({
+      where: { sessionId_productId: { sessionId: userId, productId } },
+    })
+  );
 
   return NextResponse.json({ success: true });
 }

@@ -5,7 +5,7 @@ export default function Story() {
   return (
     <section className="py-16 sm:py-20 md:py-24">
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-14 lg:gap-24 items-center">
-        <div>
+        <div data-aos="fade-right" data-aos-duration="800">
           <span className="uppercase tracking-[0.3em] text-emerald-600 text-sm font-semibold">
             Our Story
           </span>
@@ -31,7 +31,7 @@ export default function Story() {
           </button>
         </div>
 
-        <div>
+        <div data-aos="fade-left" data-aos-duration="800">
           <img
             src={story}
             className="rounded-[32px] shadow-2xl shadow-slate-300/30"

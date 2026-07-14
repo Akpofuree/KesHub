@@ -173,13 +173,13 @@ const Footer = () => {
     {
       title: "CONTACT",
       links: [
-        { text: "+1-212-456-7890", path: "tel:+12124567890", icon: PhoneIcon },
+        { text: "0813-698-4770", path: "tel:0813-698-4770", icon: PhoneIcon },
         {
-          text: "contact@keshub.com",
-          path: "mailto:contact@keshub.com",
+          text: "contact@keshhub.com",
+          path: "mailto:contact@keshhub.com",
           icon: MailIcon,
         },
-        { text: "794 Francisco, CA 94102", path: "/contact", icon: MapPinIcon },
+        { text: "Emab Plaza, Wuse II", path: "/contact", icon: MapPinIcon },
       ],
     },
   ];
@@ -192,7 +192,11 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="mx-6 bg-white">
+    <footer
+      className="mx-6 bg-white"
+      data-aos="fade-up"
+      data-aos-duration="800"
+    >
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row items-start justify-between gap-10 py-10 border-b border-slate-200 text-slate-600">
           <div>
@@ -240,7 +244,8 @@ const Footer = () => {
           </div>
         </div>
         <p className="py-4 text-sm text-slate-500">
-          Copyright (c) 2025 KES HUB. All rights reserved.
+          Copyright (c) {new Date().getFullYear()} KESH HUB. All rights
+          reserved.
         </p>
       </div>
     </footer>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Laptop,
@@ -27,6 +28,27 @@ export default function CategoryBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const active = searchParams.get("category") || "";
+  const [categories, setCategories] = useState(CATEGORIES);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const response = await fetch("/api/categories");
+        const data = await response.json();
+        if (Array.isArray(data) && data.length > 0) {
+          const keyed = CATEGORIES.map((category) => {
+            const match = data.find((item) => item.name === category.value);
+            return match ? { ...category, count: match.count } : category;
+          });
+          setCategories(keyed);
+        }
+      } catch {
+        setCategories(CATEGORIES);
+      }
+    };
+
+    loadCategories();
+  }, []);
 
   function setCategory(value) {
     const params = new URLSearchParams(searchParams);
@@ -37,7 +59,7 @@ export default function CategoryBar() {
 
   return (
     <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-      {CATEGORIES.map((cat) => {
+      {categories.map((cat) => {
         const Icon = cat.icon;
 
         return (

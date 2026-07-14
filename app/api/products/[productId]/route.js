@@ -1,5 +1,6 @@
 import { fail, ok } from "../../_lib/response";
 import { prisma } from "@/lib/prisma";
+import { invalidateProductListings } from "@/lib/cache";
 
 export async function GET(_request, { params }) {
     try {
@@ -53,6 +54,8 @@ export async function PATCH(request, { params }) {
             },
         });
 
+        await invalidateProductListings(product.category);
+
         return ok(product);
     } catch {
         return fail("Failed to update product", 500);
@@ -66,6 +69,8 @@ export async function DELETE(_request, { params }) {
         const product = await prisma.product.delete({
             where: { id: productId },
         });
+
+        await invalidateProductListings(product.category);
 
         return ok(product);
     } catch {

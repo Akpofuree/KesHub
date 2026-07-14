@@ -1,11 +1,31 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@clerk/nextjs/server";
-import { prisma } from "@/lib/prisma";
+import { createBreaker } from "@/lib/circuit-breaker";
+import { withRlsContext } from "@/lib/rls";
 
 const initializeSchema = z.object({
     email: z.string().email(),
     orderId: z.string().min(1),
+});
+
+const paystackInitializeBreaker = createBreaker(async ({ email, amount, metadata, callbackUrl }) => {
+    const response = await fetch("https://api.paystack.co/transaction/initialize", {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            email,
+            amount,
+            metadata,
+            callback_url: callbackUrl,
+        }),
+    });
+
+    const data = await response.json();
+    return { response, data };
 });
 
 export async function POST(request) {
@@ -24,7 +44,9 @@ export async function POST(request) {
 
         const body = await request.json();
         const { email, orderId } = initializeSchema.parse(body);
-        const order = await prisma.order.findUnique({ where: { id: orderId } });
+        const order = await withRlsContext({ userId }, async (tx) =>
+            tx.order.findUnique({ where: { id: orderId } })
+        );
 
         if (!order) {
             return NextResponse.json({ success: false, message: "Order not found" }, { status: 404 });
@@ -34,21 +56,12 @@ export async function POST(request) {
             ? `${process.env.NEXT_PUBLIC_APP_URL}/payment/verify`
             : new URL("/payment/verify", request.url).toString();
 
-        const paystackResponse = await fetch("https://api.paystack.co/transaction/initialize", {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email,
-                amount: Math.round(order.totalAmount * 100),
-                metadata: { orderId },
-                callback_url: callbackUrl,
-            }),
+        const { response: paystackResponse, data } = await paystackInitializeBreaker.fire({
+            email,
+            amount: Math.round(order.totalAmount * 100),
+            metadata: { orderId },
+            callbackUrl,
         });
-
-        const data = await paystackResponse.json();
 
         if (!paystackResponse.ok || !data?.status) {
             return NextResponse.json(
@@ -65,6 +78,13 @@ export async function POST(request) {
             },
         });
     } catch (error) {
+        if (error?.code === "EOPENBREAKER" || error?.code === "ETIMEDOUT") {
+            return NextResponse.json(
+                { success: false, message: "Payment service temporarily unavailable" },
+                { status: 503 }
+            );
+        }
+
         if (error instanceof z.ZodError) {
             return NextResponse.json(
                 { success: false, message: "Invalid payment payload", details: error.flatten() },

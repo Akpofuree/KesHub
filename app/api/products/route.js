@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import {
+  cacheAside,
+  cacheKeys,
+  productCategoryCacheKey,
+} from "@/lib/cache";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -10,6 +15,47 @@ export async function GET(request) {
   const minPrice = searchParams.get("minPrice");
   const maxPrice = searchParams.get("maxPrice");
   const brand = searchParams.get("brand");
+
+  const hasCatalogFilters =
+    !search && !condition && !minPrice && !maxPrice && !brand;
+
+  if (hasCatalogFilters && (featured || category)) {
+    const cacheKey = featured
+      ? cacheKeys.featuredProducts
+      : productCategoryCacheKey(category);
+
+    const products = await cacheAside(
+      cacheKey,
+      async () =>
+        prisma.product.findMany({
+          where: {
+            isActive: true,
+            ...(category && { category }),
+            ...(featured && { isFeatured: true }),
+          },
+          orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+        }),
+      300,
+    );
+
+    return NextResponse.json(products);
+  }
+
+  if (hasCatalogFilters && !featured && !category) {
+    const products = await cacheAside(
+      cacheKeys.availableProducts,
+      async () =>
+        prisma.product.findMany({
+          where: {
+            isActive: true,
+          },
+          orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+        }),
+      300,
+    );
+
+    return NextResponse.json(products);
+  }
 
   const products = await prisma.product.findMany({
     where: {

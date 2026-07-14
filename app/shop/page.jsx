@@ -6,6 +6,7 @@ import ShopControls from "@/components/shop/ShopControls";
 import Pagination from "@/components/shop/Pagination";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { getAvailableProducts } from "@/lib/public-data";
 
 export default async function ShopPage({ searchParams }) {
   const { category, condition, search, minPrice, maxPrice, brand, sort, page } =
@@ -42,15 +43,39 @@ export default async function ShopPage({ searchParams }) {
     }),
   };
 
-  const totalProducts = await prisma.product.count({ where });
-  const totalPages = Math.ceil(totalProducts / itemsPerPage);
+  const isDefaultBrowse =
+    !category &&
+    !condition &&
+    !search &&
+    !minPrice &&
+    !maxPrice &&
+    !brand &&
+    sort !== "price_asc" &&
+    sort !== "price_desc" &&
+    sort !== "newest";
 
-  const products = await prisma.product.findMany({
-    where,
-    orderBy,
-    skip: (currentPage - 1) * itemsPerPage,
-    take: itemsPerPage,
-  });
+  const [totalProducts, products] = isDefaultBrowse
+    ? await Promise.all([
+        prisma.product.count({ where }),
+        getAvailableProducts(),
+      ])
+    : await Promise.all([
+        prisma.product.count({ where }),
+        prisma.product.findMany({
+          where,
+          orderBy,
+          skip: (currentPage - 1) * itemsPerPage,
+          take: itemsPerPage,
+        }),
+      ]);
+
+  const totalPages = Math.ceil(totalProducts / itemsPerPage);
+  const pagedProducts = isDefaultBrowse
+    ? products.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage,
+      )
+    : products;
 
   return (
     <div className="bg-slate-50">
@@ -83,7 +108,7 @@ export default async function ShopPage({ searchParams }) {
           <div className="flex-1">
             <ShopControls totalProducts={totalProducts} />
 
-            {products.length === 0 ? (
+            {pagedProducts.length === 0 ? (
               <div className="rounded-3xl border border-dashed border-slate-300 bg-white py-20 text-center text-slate-400 shadow-sm">
                 <p className="mb-4 text-4xl">🛍️</p>
                 <p className="text-lg font-medium text-slate-700">
@@ -94,13 +119,23 @@ export default async function ShopPage({ searchParams }) {
             ) : (
               <>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                  {products.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                  {pagedProducts.map((product, index) => (
+                    <div
+                      key={product.id}
+                      data-aos="fade-up"
+                      data-aos-duration="700"
+                      data-aos-delay={Math.min(index * 50, 300)}
+                    >
+                      <ProductCard product={product} />
+                    </div>
                   ))}
                 </div>
 
                 {totalPages > 1 && (
-                  <Pagination currentPage={currentPage} totalPages={totalPages} />
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                  />
                 )}
               </>
             )}

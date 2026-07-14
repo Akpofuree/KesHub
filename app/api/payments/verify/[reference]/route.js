@@ -1,30 +1,46 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { createBreaker } from "@/lib/circuit-breaker";
+import { withRlsContext } from "@/lib/rls";
 
-async function markPaidOrder(order, reference) {
+async function markPaidOrder(order, reference, userId) {
     if (!order) return null;
     if (order.isPaid) return order;
 
-    return prisma.order.update({
-        where: { id: order.id },
-        data: {
-            status: "PAID",
-            isPaid: true,
-            paystackReference: reference,
-        },
-        include: {
-            user: true,
-            store: true,
-            address: true,
-            orderItems: {
-                include: {
-                    product: true,
+    return withRlsContext({ userId }, async (tx) =>
+        tx.order.update({
+            where: { id: order.id },
+            data: {
+                status: "PAID",
+                isPaid: true,
+                paystackReference: reference,
+            },
+            include: {
+                user: true,
+                store: true,
+                orderItems: {
+                    include: {
+                        product: true,
+                    },
                 },
             },
-        },
-    });
+        })
+    );
 }
+
+const paystackVerifyBreaker = createBreaker(async (reference) => {
+    const response = await fetch(
+        `https://api.paystack.co/transaction/verify/${reference}`,
+        {
+            headers: {
+                Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+            },
+        }
+    );
+
+    const data = await response.json();
+    return { response, data };
+});
 
 export async function GET(_request, { params }) {
     try {
@@ -42,16 +58,7 @@ export async function GET(_request, { params }) {
             );
         }
 
-        const paystackResponse = await fetch(
-            `https://api.paystack.co/transaction/verify/${reference}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
-                },
-            }
-        );
-
-        const data = await paystackResponse.json();
+        const { response: paystackResponse, data } = await paystackVerifyBreaker.fire(reference);
 
         if (!paystackResponse.ok || !data?.status) {
             return NextResponse.json(
@@ -62,7 +69,11 @@ export async function GET(_request, { params }) {
 
         const transaction = data.data;
         const orderId = transaction?.metadata?.orderId;
-        const order = orderId ? await prisma.order.findUnique({ where: { id: orderId } }) : null;
+        const order = orderId
+            ? await withRlsContext({ userId }, async (tx) =>
+                tx.order.findUnique({ where: { id: orderId } })
+            )
+            : null;
 
         if (order && order.userId !== userId) {
             return NextResponse.json({ success: false, message: "Forbidden" }, { status: 403 });
@@ -75,7 +86,7 @@ export async function GET(_request, { params }) {
             );
         }
 
-        const updatedOrder = orderId ? await markPaidOrder(order, reference) : null;
+        const updatedOrder = orderId ? await markPaidOrder(order, reference, userId) : null;
 
         return NextResponse.json({
             success: true,
@@ -88,6 +99,13 @@ export async function GET(_request, { params }) {
             },
         });
     } catch (error) {
+        if (error?.code === "EOPENBREAKER" || error?.code === "ETIMEDOUT") {
+            return NextResponse.json(
+                { success: false, message: "Payment verification temporarily unavailable" },
+                { status: 503 }
+            );
+        }
+
         return NextResponse.json(
             { success: false, message: "Failed to verify payment" },
             { status: 500 }

@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { Resend } from "resend";
+import { createResendBreaker, sendResendEmailWithFallback } from "@/lib/resend-email";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+const resendBreaker = createResendBreaker(resend);
 
 const subscribeSchema = z.object({
   email: z.string().email("Please provide a valid email address."),
@@ -23,7 +25,6 @@ export async function POST(request) {
 
     const { email } = result.data;
 
-    // Upsert so if they unsubscribed before, we can re-activate them
     const subscriber = await prisma.newsletterSubscriber.upsert({
       where: { email },
       update: {
@@ -36,14 +37,12 @@ export async function POST(request) {
       },
     });
 
-    // Count total active subscribers for the notification
     const totalSubscribers = await prisma.newsletterSubscriber.count({
       where: { isActive: true },
     });
 
-    // Fire-and-forget admin notification — don't block the response
     const adminEmail = process.env.ADMIN_EMAIL || "akpofurediegbe@gmail.com";
-    resend.emails.send({
+    const payload = {
       from: "KESHUB <onboarding@resend.dev>",
       to: adminEmail,
       subject: `🎉 New newsletter subscriber: ${email}`,
@@ -58,8 +57,9 @@ export async function POST(request) {
           <p style="color: #6b7280; font-size: 14px;">Total active subscribers: <strong style="color: #111827;">${totalSubscribers}</strong></p>
         </div>
       `,
-    }).catch((err) => {
-      // Log but don't fail the user's request if notification fails
+    };
+
+    sendResendEmailWithFallback(resendBreaker, payload, adminEmail).catch((err) => {
       console.error("Admin notification failed:", err);
     });
 
@@ -68,6 +68,13 @@ export async function POST(request) {
       subscriber: { id: subscriber.id, email: subscriber.email },
     });
   } catch (error) {
+    if (error?.code === "EOPENBREAKER" || error?.code === "ETIMEDOUT") {
+      return NextResponse.json(
+        { error: "Email service temporarily unavailable" },
+        { status: 503 }
+      );
+    }
+
     console.error("Newsletter subscription error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
