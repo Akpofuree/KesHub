@@ -1,10 +1,45 @@
 import { prisma } from "@/lib/prisma";
-import { CircleDollarSignIcon, ShoppingBasketIcon, PackageIcon, AlertTriangleIcon } from "lucide-react";
+import {
+  CircleDollarSignIcon,
+  ShoppingBasketIcon,
+  PackageIcon,
+  AlertTriangleIcon,
+} from "lucide-react";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function AdminDashboard() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return (
+      <div className="text-center py-20 text-slate-500">
+        Please sign in to access this page.
+      </div>
+    );
+  }
+
+  const clerkUser = await currentUser();
+  const isOrgAdmin = clerkUser?.organizationMemberships?.some(
+    (org) => org.role === "org:admin" || org.role === "org:owner",
+  );
+  const hasAdminRole = clerkUser?.unsafeMetadata?.role === "ADMIN";
+
+  if (!isOrgAdmin && !hasAdminRole) {
+    return (
+      <div className="text-center py-20 text-slate-500">
+        <p className="text-lg mb-4">
+          You don't have permission to access this page.
+        </p>
+        <a href="/" className="text-emerald-600 hover:underline">
+          Return to homepage
+        </a>
+      </div>
+    );
+  }
+
   const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "?";
 
   const [total, outOfStock, featured, recent] = await Promise.all([
@@ -21,7 +56,11 @@ export default async function AdminDashboard() {
     { title: "Total Products", value: total, icon: ShoppingBasketIcon },
     { title: "Out of Stock", value: outOfStock, icon: AlertTriangleIcon },
     { title: "Featured Products", value: featured, icon: PackageIcon },
-    { title: "Total Revenue", value: currency + "0", icon: CircleDollarSignIcon },
+    {
+      title: "Total Revenue",
+      value: currency + "0",
+      icon: CircleDollarSignIcon,
+    },
   ];
 
   return (
@@ -39,7 +78,9 @@ export default async function AdminDashboard() {
           >
             <div className="flex flex-col gap-3 text-xs">
               <p>{card.title}</p>
-              <b className="text-2xl font-medium text-slate-700">{card.value}</b>
+              <b className="text-2xl font-medium text-slate-700">
+                {card.value}
+              </b>
             </div>
             <card.icon
               size={50}

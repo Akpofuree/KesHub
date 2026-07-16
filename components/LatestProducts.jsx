@@ -3,6 +3,7 @@ import React from "react";
 import Title from "./Title";
 import ProductCard from "./ProductCard";
 import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
 
 const LatestProducts = () => {
   const displayQuantity = 4;
@@ -10,27 +11,31 @@ const LatestProducts = () => {
 
   return (
     <div className="px-6 my-30 max-w-6xl mx-auto">
-      <div data-aos="fade-up" data-aos-duration="700">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+      >
         <Title
           title="Latest Products"
           description={`Showing ${products.length < displayQuantity ? products.length : displayQuantity} of ${products.length} products`}
           href="/shop"
         />
-      </div>
+      </motion.div>
       <div className="mt-12 grid grid-cols-2 sm:flex flex-wrap gap-6 justify-between">
         {products
           .slice()
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, displayQuantity)
           .map((product, index) => (
-            <div
+            <motion.div
               key={index}
-              data-aos="fade-up"
-              data-aos-duration="700"
-              data-aos-delay={index * 100}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: index * 0.1 }}
             >
               <ProductCard product={product} />
-            </div>
+            </motion.div>
           ))}
       </div>
     </div>

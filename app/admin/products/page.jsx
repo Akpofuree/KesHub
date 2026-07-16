@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import DeleteModal from "@/components/admin/DeleteModal";
 import { PencilIcon, TrashIcon, PlusIcon } from "lucide-react";
+import ProductImage from "@/components/ProductImage";
 
 const CATEGORIES = ["PHONES", "LAPTOPS", "HEADPHONES", "ACCESSORIES", "TABLETS", "SMARTWATCHES", "GAMING"];
 const CONDITIONS = ["BRAND_NEW", "BOX_TON", "UK_USED", "GRADE_A", "GRADE_B", "GRADE_C"];
@@ -109,7 +110,7 @@ export default function ProductsPage() {
                 <tr key={product.id} className="border-t border-slate-100">
                   <td className="p-3">
                     {product.images?.[0] ? (
-                      <img src={product.images[0]} alt="" className="w-12 h-12 object-cover rounded" />
+                      <ProductImage src={product.images[0]} className="w-12 h-12 object-cover rounded" />
                     ) : (
                       <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">📦</div>
                     )}

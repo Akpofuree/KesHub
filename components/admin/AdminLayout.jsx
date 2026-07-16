@@ -13,11 +13,13 @@ const AdminLayout = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchIsAdmin = async () => {
-    // Check if user is admin via Clerk Organizations
+    // Check if user is admin via Clerk Organizations or unsafeMetadata
     const isOrgAdmin = user?.organizationMemberships?.some(
-      (org) => org.role === "org:admin",
+      (org) => org.role === "org:admin" || org.role === "org:owner",
     );
-    setIsAdmin(isOrgAdmin);
+    const hasAdminRole = user?.unsafeMetadata?.role === "ADMIN";
+    
+    setIsAdmin(isOrgAdmin || hasAdminRole);
     setLoading(false);
   };
 

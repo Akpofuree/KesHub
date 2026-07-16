@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import ProductImage from "@/components/ProductImage";
 import ConditionBadge from "@/components/shop/ConditionBadge";
 import AddToCartButton from "@/components/shop/AddToCartButton";
 import Link from "next/link";
@@ -47,14 +49,14 @@ export default async function ProductDetailPage({ params }) {
         {/* Image Gallery */}
         <div>
           <div className="aspect-square bg-gray-50 rounded-2xl overflow-hidden mb-3">
-            <img src={product.images?.[0] || "/placeholder.jpg"} alt={product.name}
+            <ProductImage src={product.images?.[0] || "/placeholder.jpg"} alt={product.name}
               className="w-full h-full object-cover" />
           </div>
           {product.images?.length > 1 && (
             <div className="flex gap-2">
               {product.images.slice(1).map((img, i) => (
                 <div key={i} className="w-20 h-20 rounded-lg overflow-hidden border border-gray-200">
-                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  <ProductImage src={img} className="w-full h-full object-cover" />
                 </div>
               ))}
             </div>

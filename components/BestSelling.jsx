@@ -2,6 +2,7 @@
 import Title from "./Title";
 import ProductCard from "./ProductCard";
 import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
 
 const BestSelling = () => {
   const displayQuantity = 8;
@@ -9,27 +10,31 @@ const BestSelling = () => {
 
   return (
     <div id="bestselling" className="px-6 my-30 max-w-6xl mx-auto">
-      <div data-aos="fade-up" data-aos-duration="700">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+      >
         <Title
           title="Best Selling"
           description={`Showing ${products.length < displayQuantity ? products.length : displayQuantity} of ${products.length} products`}
           href="/shop"
         />
-      </div>
+      </motion.div>
       <div className="mt-12 grid grid-cols-2 sm:flex flex-wrap gap-6 xl:gap-12">
         {products
           .slice()
           .sort((a, b) => b.rating.length - a.rating.length)
           .slice(0, displayQuantity)
           .map((product, index) => (
-            <div
+            <motion.div
               key={index}
-              data-aos="fade-up"
-              data-aos-duration="700"
-              data-aos-delay={index * 100}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: index * 0.1 }}
             >
               <ProductCard product={product} />
-            </div>
+            </motion.div>
           ))}
       </div>
     </div>

@@ -1,12 +1,13 @@
 import { categories } from "@/assets/assets";
+import { motion } from "framer-motion";
 
 const CategoriesMarquee = () => {
   return (
-    <div
+    <motion.div
       className="overflow-hidden w-full relative max-w-7xl mx-auto select-none group sm:my-20"
-      data-aos="fade-up"
-      data-aos-duration="800"
-      data-aos-offset="100"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
     >
       <div className="absolute left-0 top-0 h-full w-20 z-10 pointer-events-none bg-gradient-to-r from-white to-transparent" />
       <div className="flex min-w-[200%] animate-[marqueeScroll_10s_linear_infinite] sm:animate-[marqueeScroll_40s_linear_infinite] group-hover:[animation-play-state:paused] gap-4">
@@ -22,7 +23,7 @@ const CategoriesMarquee = () => {
         )}
       </div>
       <div className="absolute right-0 top-0 h-full w-20 md:w-40 z-10 pointer-events-none bg-gradient-to-l from-white to-transparent" />
-    </div>
+    </motion.div>
   );
 };
 

@@ -1,12 +1,16 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export default function CTA() {
   return (
     <section className="py-16 sm:py-20 md:py-24 bg-slate-950 text-white">
-      <div
+      <motion.div
         className="max-w-5xl mx-auto px-6 text-center"
-        data-aos="fade-up"
-        data-aos-duration="800"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
       >
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold leading-[1.08]">
           Ready to upgrade your shopping experience?
@@ -23,7 +27,7 @@ export default function CTA() {
         >
           Shop Now
         </Link>
-      </div>
+      </motion.div>
     </section>
   );
 }

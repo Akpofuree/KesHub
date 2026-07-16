@@ -1,5 +1,6 @@
 import Link from "next/link";
 import BrandLogo from "@/components/BrandLogo";
+import { motion } from "framer-motion";
 
 const Footer = () => {
   const MailIcon = () => (
@@ -165,6 +166,7 @@ const Footer = () => {
       links: [
         { text: "Home", path: "/", icon: null },
         { text: "Privacy Policy", path: "/privacy", icon: null },
+        { text: "Return Policy", path: "/return-policy", icon: null },
         { text: "Terms & Conditions", path: "/terms", icon: null },
         { text: "Become Plus Member", path: "/pricing", icon: null },
         { text: "Create Your Store", path: "/create-store", icon: null },
@@ -192,10 +194,11 @@ const Footer = () => {
   ];
 
   return (
-    <footer
+    <motion.footer
       className="mx-6 bg-white"
-      data-aos="fade-up"
-      data-aos-duration="800"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
     >
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row items-start justify-between gap-10 py-10 border-b border-slate-200 text-slate-600">
@@ -248,7 +251,7 @@ const Footer = () => {
           reserved.
         </p>
       </div>
-    </footer>
+    </motion.footer>
   );
 };
 

@@ -4,6 +4,7 @@ import { MailIcon, MapPinIcon, PhoneIcon } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import AnimatedSubmitButton from "@/components/ui/AnimatedSubmitButton";
+import { motion } from "framer-motion";
 
 export default function ContactPage() {
   const [status, setStatus] = useState("idle");
@@ -60,21 +61,22 @@ export default function ContactPage() {
         <div className="flex flex-col lg:flex-row gap-12 max-w-5xl mx-auto">
           {/* Contact Info */}
           <div className="flex-1 space-y-8">
-            <div
+            <motion.div
               className="bg-slate-50 border border-slate-100 rounded-2xl p-8"
-              data-aos="fade-up"
-              data-aos-duration="700"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
             >
               <h3 className="text-xl font-semibold text-slate-800 mb-6">
                 Contact Information
               </h3>
 
               <div className="space-y-6">
-                <div
+                <motion.div
                   className="flex items-start gap-4"
-                  data-aos="fade-right"
-                  data-aos-duration="600"
-                  data-aos-delay="100"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
                 >
                   <div className="bg-white p-3 rounded-full border border-slate-200 text-slate-600">
                     <MapPinIcon size={20} />
@@ -87,13 +89,13 @@ export default function ContactPage() {
                       Wuse II
                     </p>
                   </div>
-                </div>
+                </motion.div>
 
-                <div
+                <motion.div
                   className="flex items-start gap-4"
-                  data-aos="fade-right"
-                  data-aos-duration="600"
-                  data-aos-delay="200"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
                 >
                   <div className="bg-white p-3 rounded-full border border-slate-200 text-slate-600">
                     <PhoneIcon size={20} />
@@ -109,13 +111,13 @@ export default function ContactPage() {
                       </a>
                     </p>
                   </div>
-                </div>
+                </motion.div>
 
-                <div
+                <motion.div
                   className="flex items-start gap-4"
-                  data-aos="fade-right"
-                  data-aos-duration="600"
-                  data-aos-delay="300"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
                 >
                   <div className="bg-white p-3 rounded-full border border-slate-200 text-slate-600">
                     <MailIcon size={20} />
@@ -134,29 +136,34 @@ export default function ContactPage() {
                       We aim to reply within 24 hours
                     </p>
                   </div>
-                </div>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Map placeholder */}
-            <div
-              className="h-64 bg-slate-200 rounded-2xl overflow-hidden relative border border-slate-100 flex items-center justify-center"
-              data-aos="fade-up"
-              data-aos-duration="700"
-              data-aos-delay="400"
+            {/* Google Map Embed */}
+            <motion.div
+              className="h-64 rounded-2xl overflow-hidden relative border border-slate-100 shadow-sm"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.4 }}
             >
-              <p className="text-slate-500 font-medium">
-                Interactive Map Placeholder
-              </p>
-              <div className="absolute inset-0 bg-[url('https://placehold.co/800x400/e2e8f0/94a3b8?text=Map')] bg-cover bg-center opacity-50 mix-blend-multiply"></div>
-            </div>
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3939.8166540673413!2d7.472718175782787!3d9.080509688267252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x104e0a5c43d22b27%3A0xc3f8e562725ed1e2!2sEmab%20Plaza!5e0!3m2!1sen!2sng!4v1700000000000!5m2!1sen!2sng"
+                className="absolute inset-0 w-full h-full border-0"
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Office Location Map"
+              ></iframe>
+            </motion.div>
           </div>
 
           {/* Contact Form */}
-          <div
+          <motion.div
             className="flex-[1.5]"
-            data-aos="fade-up"
-            data-aos-duration="700"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
           >
             <form
               onSubmit={handleSubmit}
@@ -260,7 +267,7 @@ export default function ContactPage() {
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg disabled:bg-indigo-400 disabled:cursor-not-allowed"
               />
             </form>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

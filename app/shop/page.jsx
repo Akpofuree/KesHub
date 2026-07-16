@@ -120,12 +120,7 @@ export default async function ShopPage({ searchParams }) {
               <>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                   {pagedProducts.map((product, index) => (
-                    <div
-                      key={product.id}
-                      data-aos="fade-up"
-                      data-aos-duration="700"
-                      data-aos-delay={Math.min(index * 50, 300)}
-                    >
+                    <div key={product.id}>
                       <ProductCard product={product} />
                     </div>
                   ))}

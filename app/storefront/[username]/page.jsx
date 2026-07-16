@@ -106,9 +106,6 @@ export default async function PublicStorePage({ params }) {
                   key={product.id}
                   href={`/shop/${product.slug}`}
                   className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md"
-                  data-aos="fade-up"
-                  data-aos-duration="700"
-                  data-aos-delay={Math.min(index * 50, 300)}
                 >
                   <div className="aspect-square bg-slate-50">
                     <Image

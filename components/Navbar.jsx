@@ -23,7 +23,7 @@ const Navbar = () => {
   const { user } = useUser();
   // Check if user is admin via Clerk Organizations (not unsafeMetadata)
   const isOrgAdmin = user?.organizationMemberships?.some(
-    (org) => org.role === "org:admin",
+    (org) => org.role === "org:admin" || org.role === "org:owner",
   );
   const role = isOrgAdmin ? "ADMIN" : user?.unsafeMetadata?.role;
   const dashboardHref =

@@ -1,0 +1,62 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "env": {
+    "NEXT_PUBLIC_CURRENCY_SYMBOL": {
+      "description": "Currency symbol for the application"
+    },
+    "DATABASE_URL": {
+      "description": "PostgreSQL database connection string"
+    },
+    "DIRECT_URL": {
+      "description": "Direct PostgreSQL database connection string"
+    },
+    "CLOUDINARY_CLOUD_NAME": {
+      "description": "Cloudinary cloud name for image uploads"
+    },
+    "CLOUDINARY_API_KEY": {
+      "description": "Cloudinary API key"
+    },
+    "CLOUDINARY_API_SECRET": {
+      "description": "Cloudinary API secret"
+    },
+    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY": {
+      "description": "Clerk publishable key for authentication"
+    },
+    "CLERK_SECRET_KEY": {
+      "description": "Clerk secret key for authentication"
+    },
+    "NEXT_PUBLIC_CLERK_SIGN_IN_URL": {
+      "description": "Clerk sign in URL"
+    },
+    "NEXT_PUBLIC_CLERK_SIGN_UP_URL": {
+      "description": "Clerk sign up URL"
+    },
+    "ADMIN_SIGNUP_CODE": {
+      "description": "Secret code for admin signup"
+    },
+    "KESHUB_KEY_NAME": {
+      "description": "KesHub API key name"
+    },
+    "KESHUB_API_KEY": {
+      "description": "KesHub API key"
+    },
+    "KESHUB_PRODUCT_ENVIRONMENT": {
+      "description": "KesHub product environment"
+    },
+    "KESHUB_SECRET_KEY": {
+      "description": "KesHub secret key"
+    },
+    "CLERK_WEBHOOK_SECRET": {
+      "description": "Clerk webhook secret for user sync"
+    }
+  },
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_ENV": "production"
+    }
+  }
+}

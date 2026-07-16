@@ -31,7 +31,9 @@ export default clerkMiddleware(async (auth, request) => {
   if (isAuthEntryRoute(request)) {
     const forwardedFor = request.headers.get("x-forwarded-for") || "";
     const clientIp = forwardedFor.split(",")[0]?.trim() || "unknown";
-    const limitResult = await checkAuthLimit(`auth-entry:${clientIp}:${request.nextUrl.pathname}`);
+    const limitResult = await checkAuthLimit(
+      `auth-entry:${clientIp}:${request.nextUrl.pathname}`,
+    );
 
     if (!limitResult.success) {
       return NextResponse.redirect(new URL("/staging-access", request.url));
@@ -41,6 +43,14 @@ export default clerkMiddleware(async (auth, request) => {
   if (!isProtectedRoute(request)) return;
 
   await auth.protect();
+
+  // Additional role-based protection for admin routes
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.redirect(new URL("/sign-in", request.url));
+    }
+  }
 });
 
 export const config = {

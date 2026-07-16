@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import { X, UploadCloud, Loader2 } from "lucide-react";
+import ProductImage from "@/components/ProductImage";
 
 export default function ImageUploader({ images, onChange }) {
   const [uploading, setUploading] = useState(false);
@@ -48,7 +50,7 @@ export default function ImageUploader({ images, onChange }) {
       <div className="flex flex-wrap gap-3 mb-4">
         {images.map((url, i) => (
           <div key={i} className="relative w-24 h-24">
-            <img src={url} alt="" className="w-full h-full object-cover rounded-lg border" />
+            <ProductImage src={url} className="w-full h-full object-cover rounded-lg border" />
             <button
               type="button"
               onClick={() => removeImage(i)}

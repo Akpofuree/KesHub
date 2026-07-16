@@ -75,9 +75,6 @@ export default function WishlistPage() {
             <div
               key={item.id}
               className="rounded-3xl border border-slate-200 bg-white overflow-hidden shadow-sm"
-              data-aos="fade-up"
-              data-aos-duration="700"
-              data-aos-delay={Math.min(index * 50, 300)}
             >
               <div className="aspect-square bg-slate-50">
                 <img

@@ -4,12 +4,14 @@ export default function StickyFounder() {
   return (
     <section className="relative overflow-hidden bg-slate-100 min-h-[250vh] md:min-h-[180vh] lg:min-h-[180vh]">
       <div className="relative bg-white overflow-hidden min-h-[250vh] md:min-h-[180vh] lg:min-h-[180vh]">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat md:hidden bg-fixed"
-          style={{
-            backgroundImage: `url(${founder.src})`,
-          }}
-        />
+        <div className="absolute inset-0 md:hidden overflow-hidden [clip-path:inset(0)]">
+          <div
+            className="fixed inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${founder.src})`,
+            }}
+          />
+        </div>
 
         <div className="relative z-10 flex min-h-[250vh] flex-col md:min-h-[180vh] md:flex-row">
           <div

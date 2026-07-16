@@ -4,16 +4,8 @@ import BrandLogo from "@/components/BrandLogo";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { SignUp } from "@clerk/nextjs";
-import { useSearchParams } from "next/navigation";
 
 export default function Page() {
-  const searchParams = useSearchParams();
-  // Block any admin signup attempts and redirect to customer signup
-  const role =
-    (searchParams.get("role") || "customer") === "admin"
-      ? "customer"
-      : searchParams.get("role") || "customer";
-
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#e8fff2_0%,_#f8fafc_40%,_#eef2ff_100%)] px-4 py-10">
       <div className="mx-auto max-w-6xl">
@@ -38,7 +30,7 @@ export default function Page() {
           <div className="w-full max-w-[560px] rounded-3xl border border-slate-200 bg-white px-3 py-4 sm:px-8 sm:py-8 shadow-sm">
             <div className="mb-6">
               <p className="text-sm font-medium uppercase tracking-[0.2em] text-green-600">
-                Customer Sign Up
+                Sign Up
               </p>
               <h1 className="mt-2 text-3xl font-semibold text-slate-900">
                 Create your account
@@ -52,7 +44,6 @@ export default function Page() {
               path="/sign-up"
               signInUrl="/sign-in"
               forceRedirectUrl="/"
-              unsafeMetadata={{ role: "USER" }}
             />
           </div>
         </div>
