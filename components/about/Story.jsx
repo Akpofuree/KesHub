@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import ScrollReveal from "../ScrollReveal";
 
 const story =
   "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1000&q=80";
@@ -9,11 +9,7 @@ export default function Story() {
   return (
     <section className="py-16 sm:py-20 md:py-24">
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-14 lg:gap-24 items-center">
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-        >
+        <ScrollReveal animation="fade-right">
           <span className="uppercase tracking-[0.3em] text-emerald-600 text-sm font-semibold">
             Our Story
           </span>
@@ -37,19 +33,15 @@ export default function Story() {
           <button className="mt-6 inline-flex items-center justify-center rounded-full bg-emerald-600 px-8 py-3 text-white text-base font-semibold shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition">
             Explore Our Story
           </button>
-        </motion.div>
+        </ScrollReveal>
 
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-        >
+        <ScrollReveal animation="fade-left" delay={200}>
           <img
             src={story}
             className="rounded-[32px] shadow-2xl shadow-slate-300/30"
             alt="Our story image"
           />
-        </motion.div>
+        </ScrollReveal>
       </div>
     </section>
   );

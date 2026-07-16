@@ -5,7 +5,6 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "@/lib/features/cart/cartSlice";
 import { ShoppingCartIcon, HeartIcon } from "lucide-react";
 import toast from "react-hot-toast";
-import { motion } from "framer-motion";
 
 export default function ProductCardActions({ productId }) {
   const dispatch = useDispatch();
@@ -15,16 +14,16 @@ export default function ProductCardActions({ productId }) {
   async function handleAddToCart(e) {
     e.preventDefault();
     if (addingToCart) return;
-    
+
     setAddingToCart(true);
     dispatch(addToCart({ productId }));
-    
+
     await fetch("/api/cart", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ productId, quantity: 1 }),
     }).catch(console.error);
-    
+
     setAddingToCart(false);
   }
 
@@ -55,24 +54,28 @@ export default function ProductCardActions({ productId }) {
 
   return (
     <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-      <motion.button
-        whileTap={{ scale: 0.9 }}
+      <button
         onClick={handleAddToCart}
         disabled={addingToCart}
         title="Add to Cart"
-        className="p-3 bg-white text-gray-900 rounded-full hover:bg-gray-100 hover:scale-110 transition-transform disabled:opacity-75"
+        className="p-3 bg-white text-gray-900 rounded-full hover:bg-gray-100 hover:scale-110 transition-transform disabled:opacity-75 active:scale-90"
       >
-        <ShoppingCartIcon size={20} className={addingToCart ? "animate-pulse" : ""} />
-      </motion.button>
-      <motion.button
-        whileTap={{ scale: 0.9 }}
+        <ShoppingCartIcon
+          size={20}
+          className={addingToCart ? "animate-pulse" : ""}
+        />
+      </button>
+      <button
         onClick={handleAddToWishlist}
         disabled={addingToWishlist}
         title="Add to Wishlist"
-        className="p-3 bg-white text-gray-900 rounded-full hover:bg-pink-50 hover:text-pink-600 hover:scale-110 transition-transform disabled:opacity-75"
+        className="p-3 bg-white text-gray-900 rounded-full hover:bg-pink-50 hover:text-pink-600 hover:scale-110 transition-transform disabled:opacity-75 active:scale-90"
       >
-        <HeartIcon size={20} className={addingToWishlist ? "animate-pulse" : ""} />
-      </motion.button>
+        <HeartIcon
+          size={20}
+          className={addingToWishlist ? "animate-pulse" : ""}
+        />
+      </button>
     </div>
   );
 }

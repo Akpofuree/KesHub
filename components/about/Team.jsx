@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import ScrollReveal from "../ScrollReveal";
 
 const team1 =
   "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=500&q=80";
@@ -38,27 +38,21 @@ export default function Team() {
   return (
     <section className="py-36 bg-white">
       <div className="max-w-7xl mx-auto px-6">
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-        >
+        <ScrollReveal animation="fade-up" className="text-center">
           <p className="uppercase tracking-[8px] text-orange-500">
             Meet Our Team
           </p>
 
           <h2 className="text-5xl font-bold mt-6">Passionate People</h2>
-        </motion.div>
+        </ScrollReveal>
 
         <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-8 mt-20">
           {team.map((member, index) => (
-            <motion.div
+            <ScrollReveal
               key={member.name}
+              animation="fade-up"
+              delay={index * 100}
               className="group overflow-hidden rounded-[30px] bg-white shadow-xl"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: index * 0.1 }}
             >
               <div className="overflow-hidden">
                 <img
@@ -73,7 +67,7 @@ export default function Team() {
 
                 <p className="mt-3 text-gray-500">{member.role}</p>
               </div>
-            </motion.div>
+            </ScrollReveal>
           ))}
         </div>
       </div>

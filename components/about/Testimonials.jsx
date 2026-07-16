@@ -1,3 +1,9 @@
+"use client";
+
+import Image from "next/image";
+import profilePic3 from "@/assets/profile_pic3.jpg";
+import ScrollReveal from "../ScrollReveal";
+
 const testimonials = [
   {
     name: "Chimamanda Okafor",
@@ -17,18 +23,15 @@ const testimonials = [
     name: "Aisha Bello",
     company: "Kano Connect",
     text: "The checkout experience was seamless, and my order arrived sooner than expected. Highly recommended.",
-    image:
-      "https://images.unsplash.com/photo-1589156280159-27a852cc18c8?auto=format&fit=crop&w=200&q=80",
+    image: profilePic3,
   },
 ];
-
-import Image from "next/image";
 
 export default function Testimonials() {
   return (
     <section className="relative z-30 bg-slate-50 pt-36 pb-36">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-20">
+        <ScrollReveal animation="fade-up" className="text-center mb-20">
           <div className="w-24 h-1 bg-emerald-600 rounded-full mx-auto mb-8" />
           <p className="uppercase tracking-[0.4em] text-emerald-600 text-sm font-semibold">
             Testimonials
@@ -36,12 +39,14 @@ export default function Testimonials() {
           <h2 className="text-5xl font-semibold mt-6 text-slate-950">
             What customers are saying
           </h2>
-        </div>
+        </ScrollReveal>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {testimonials.map((item) => (
-            <div
+          {testimonials.map((item, index) => (
+            <ScrollReveal
               key={item.name}
+              animation="zoom-in"
+              delay={index * 100}
               className="rounded-[32px] border border-slate-200 bg-white/90 p-8 shadow-lg shadow-slate-200/50"
             >
               <div className="flex items-center gap-4">
@@ -63,7 +68,7 @@ export default function Testimonials() {
               </div>
 
               <p className="mt-8 text-slate-700 leading-8">{item.text}</p>
-            </div>
+            </ScrollReveal>
           ))}
         </div>
       </div>

@@ -557,7 +557,7 @@ export default function HowWeWork() {
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         <div className="flex flex-col lg:flex-row items-start relative">
           {/* Sticky Phone Column */}
-          <div className="w-full lg:w-1/2 sticky top-0 h-[45vh] lg:h-screen flex items-center justify-center z-20 bg-[#FAFAFA] lg:bg-transparent pt-6 lg:pt-0 pb-4 lg:pb-0 border-b border-gray-100/50 lg:border-none shadow-[0_20px_20px_-20px_rgba(0,0,0,0.02)] lg:shadow-none">
+          <div className="w-full lg:w-1/2 sticky top-24 h-[45vh] lg:h-[calc(100vh-6rem)] flex items-center justify-center z-[60] bg-[#FAFAFA] lg:bg-transparent pt-6 lg:pt-0 pb-4 lg:pb-0 border-b border-gray-100/50 lg:border-none shadow-[0_20px_20px_-20px_rgba(0,0,0,0.02)] lg:shadow-none">
             <div className="transform scale-[0.65] sm:scale-75 lg:scale-100 origin-center">
               <PhoneMockup activeFeature={features[activeIndex]} />
             </div>

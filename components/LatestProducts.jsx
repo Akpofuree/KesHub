@@ -1,9 +1,10 @@
 "use client";
+
 import React from "react";
 import Title from "./Title";
 import ProductCard from "./ProductCard";
 import { useSelector } from "react-redux";
-import { motion } from "framer-motion";
+import ScrollReveal from "./ScrollReveal";
 
 const LatestProducts = () => {
   const displayQuantity = 4;
@@ -11,31 +12,26 @@ const LatestProducts = () => {
 
   return (
     <div className="px-6 my-30 max-w-6xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
-      >
+      <ScrollReveal animation="fade-up">
         <Title
           title="Latest Products"
           description={`Showing ${products.length < displayQuantity ? products.length : displayQuantity} of ${products.length} products`}
           href="/shop"
         />
-      </motion.div>
+      </ScrollReveal>
       <div className="mt-12 grid grid-cols-2 sm:flex flex-wrap gap-6 justify-between">
         {products
           .slice()
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, displayQuantity)
           .map((product, index) => (
-            <motion.div
+            <ScrollReveal
               key={index}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: index * 0.1 }}
+              animation="fade-up"
+              delay={index * 100}
             >
               <ProductCard product={product} />
-            </motion.div>
+            </ScrollReveal>
           ))}
       </div>
     </div>

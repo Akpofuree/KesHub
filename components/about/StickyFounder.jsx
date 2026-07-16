@@ -1,10 +1,13 @@
+"use client";
+
 import founder from "@/assets/IMG_2033.png";
+import ScrollReveal from "../ScrollReveal";
 
 export default function StickyFounder() {
   return (
-    <section className="relative overflow-hidden bg-slate-100 min-h-[250vh] md:min-h-[180vh] lg:min-h-[180vh]">
+    <section className="relative overflow-hidden bg-slate-100 min-h-[250vh] md:min-h-[180vh] lg:min-h-[180vh] pt-32 md:pt-40">
       <div className="relative bg-white overflow-hidden min-h-[250vh] md:min-h-[180vh] lg:min-h-[180vh]">
-        <div className="absolute inset-0 md:hidden overflow-hidden [clip-path:inset(0)]">
+        <div className="absolute inset-0 md:hidden overflow-hidden [clip-path:inset(0)] pt-32 md:pt-40">
           <div
             className="fixed inset-0 bg-cover bg-center bg-no-repeat"
             style={{
@@ -15,7 +18,7 @@ export default function StickyFounder() {
 
         <div className="relative z-10 flex min-h-[250vh] flex-col md:min-h-[180vh] md:flex-row">
           <div
-            className="hidden md:block md:w-[45%] lg:w-1/2"
+            className="hidden md:block md:w-[45%] lg:w-1/2 pt-32 md:pt-40"
             style={{
               backgroundImage: `url(${founder.src})`,
               backgroundAttachment: "fixed",
@@ -27,12 +30,16 @@ export default function StickyFounder() {
 
           <div className="relative w-full md:w-[55%] lg:w-1/2 px-6 py-16 sm:px-8 md:px-10 md:py-20 lg:px-16 lg:py-24">
             <div className="md:sticky md:top-[24vh] lg:top-[30vh]">
-              <div className="mx-auto max-w-xl space-y-5 text-center md:mx-0 md:max-w-none md:text-left">
-                <p className="uppercase tracking-[0.35em] text-white/80 md:text-slate-600 text-sm">
+              <div className="absolute inset-0 bg-gradient-to-r from-white/80 to-white/40 backdrop-blur-sm -z-10 rounded-3xl" />
+              <ScrollReveal
+                animation="fade-up"
+                className="mx-auto max-w-xl space-y-5 text-center md:mx-0 md:max-w-none md:text-left relative"
+              >
+                <p className="uppercase tracking-[0.35em] text-emerald-700 text-sm">
                   Founder
                 </p>
 
-                <h2 className="text-4xl sm:text-5xl font-semibold leading-tight text-white md:text-slate-900">
+                <h2 className="text-4xl sm:text-5xl font-semibold leading-tight text-slate-900">
                   Building
                   <br />
                   Something
@@ -42,7 +49,7 @@ export default function StickyFounder() {
                   Business
                 </h2>
 
-                <div className="mx-auto max-w-lg space-y-4 leading-snug text-white/90 md:mx-0 md:max-w-none md:text-slate-700">
+                <div className="mx-auto max-w-lg space-y-4 leading-snug text-slate-600 md:mx-0 md:max-w-none">
                   <p>
                     KESHUB didn't start in a boardroom - it started with a
                     simple frustration: buying a good phone or laptop in Nigeria
@@ -63,14 +70,12 @@ export default function StickyFounder() {
                 </div>
 
                 <div className="pt-2">
-                  <h3 className="text-3xl font-semibold text-white md:text-slate-900">
-                    Ramedrin
+                  <h3 className="text-3xl font-semibold text-slate-900">
+                    Kesiena Diegbe
                   </h3>
-                  <span className="text-white/70 md:text-slate-500">
-                    Founder & CEO
-                  </span>
+                  <span className="text-slate-500">Founder & CEO</span>
                 </div>
-              </div>
+              </ScrollReveal>
             </div>
           </div>
         </div>

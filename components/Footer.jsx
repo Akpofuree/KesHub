@@ -1,6 +1,7 @@
+"use client";
+
 import Link from "next/link";
 import BrandLogo from "@/components/BrandLogo";
-import { motion } from "framer-motion";
 
 const Footer = () => {
   const MailIcon = () => (
@@ -194,12 +195,7 @@ const Footer = () => {
   ];
 
   return (
-    <motion.footer
-      className="mx-6 bg-white"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-    >
+    <footer className="mx-6 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row items-start justify-between gap-10 py-10 border-b border-slate-200 text-slate-600">
           <div>
@@ -251,7 +247,7 @@ const Footer = () => {
           reserved.
         </p>
       </div>
-    </motion.footer>
+    </footer>
   );
 };
 

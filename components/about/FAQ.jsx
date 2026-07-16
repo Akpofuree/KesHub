@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import ScrollReveal from "../ScrollReveal";
 
 const faqs = [
   {
@@ -47,12 +47,7 @@ export default function FAQ() {
   return (
     <section className="py-16 sm:py-20 md:py-24 bg-slate-50">
       <div className="max-w-4xl mx-auto px-6">
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-        >
+        <ScrollReveal animation="fade-up" className="text-center mb-12">
           <p className="uppercase tracking-[0.4em] text-emerald-600 text-sm font-semibold">
             FAQ
           </p>
@@ -60,16 +55,15 @@ export default function FAQ() {
           <h2 className="text-4xl sm:text-5xl font-semibold mt-2 text-slate-950">
             Frequently Asked Questions
           </h2>
-        </motion.div>
+        </ScrollReveal>
 
         <div className="space-y-4">
           {faqs.map((faq, index) => (
-            <motion.div
+            <ScrollReveal
               key={index}
+              animation="fade-up"
+              delay={index * 50}
               className="rounded-3xl bg-white p-6 sm:p-8 shadow-md shadow-slate-200/50"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: index * 0.05 }}
             >
               <button
                 type="button"
@@ -87,7 +81,7 @@ export default function FAQ() {
               {openIndex === index && (
                 <p className="mt-3 text-slate-700 leading-snug">{faq.answer}</p>
               )}
-            </motion.div>
+            </ScrollReveal>
           ))}
         </div>
       </div>

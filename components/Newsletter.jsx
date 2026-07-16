@@ -4,7 +4,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import Title from "./Title";
 import AnimatedSubmitButton from "./ui/AnimatedSubmitButton";
-import { motion } from "framer-motion";
+import ScrollReveal from "./ScrollReveal";
 
 const Newsletter = () => {
   const [email, setEmail] = useState("");
@@ -40,12 +40,7 @@ const Newsletter = () => {
   };
 
   return (
-    <motion.div
-      className="flex flex-col items-center mx-4 my-36 px-2 sm:px-0"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-    >
+    <ScrollReveal animation="fade-up" className="flex flex-col items-center mx-4 my-36 px-2 sm:px-0">
       <Title
         title="Never miss a drop."
         description="Get first access to new arrivals, price drops, and gadget guides — straight to your inbox, no spam."
@@ -72,7 +67,7 @@ const Newsletter = () => {
           className="mt-3 sm:mt-0 sm:ml-2 w-full sm:w-auto font-semibold bg-emerald-600 text-white px-7 py-3 rounded-full hover:bg-emerald-700 disabled:opacity-70"
         />
       </form>
-    </motion.div>
+    </ScrollReveal>
   );
 };
 
