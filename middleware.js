@@ -1,7 +1,8 @@
+import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 const isStagingAccessRoute = (pathname) => pathname.startsWith("/staging-access");
 
-export default function middleware(request) {
+export default clerkMiddleware((auth, request) => {
   if (process.env.NEXT_PUBLIC_ENV === "staging") {
     const secret = process.env.STAGING_ACCESS_SECRET;
     const pathname = request.nextUrl.pathname;
@@ -17,7 +18,7 @@ export default function middleware(request) {
   }
 
   return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: [
