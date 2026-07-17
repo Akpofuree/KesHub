@@ -54,20 +54,27 @@ export default async function ShopPage({ searchParams }) {
     sort !== "price_desc" &&
     sort !== "newest";
 
-  const [totalProducts, products] = isDefaultBrowse
-    ? await Promise.all([
-        prisma.product.count({ where }),
-        getAvailableProducts(),
-      ])
-    : await Promise.all([
-        prisma.product.count({ where }),
-        prisma.product.findMany({
-          where,
-          orderBy,
-          skip: (currentPage - 1) * itemsPerPage,
-          take: itemsPerPage,
-        }),
-      ]);
+  let totalProducts = 0;
+  let products = [];
+
+  try {
+    [totalProducts, products] = isDefaultBrowse
+      ? await Promise.all([
+          prisma.product.count({ where }),
+          getAvailableProducts(),
+        ])
+      : await Promise.all([
+          prisma.product.count({ where }),
+          prisma.product.findMany({
+            where,
+            orderBy,
+            skip: (currentPage - 1) * itemsPerPage,
+            take: itemsPerPage,
+          }),
+        ]);
+  } catch (error) {
+    console.error("Shop page product query failed:", error);
+  }
 
   const totalPages = Math.ceil(totalProducts / itemsPerPage);
   const pagedProducts = isDefaultBrowse
