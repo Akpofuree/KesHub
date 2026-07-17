@@ -1,43 +1,23 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+const isStagingAccessRoute = (pathname) => pathname.startsWith("/staging-access");
 
-const isProtectedRoute = createRouteMatcher(["/admin(.*)", "/store(.*)"]);
-const isStagingAccessRoute = createRouteMatcher(["/staging-access(.*)"]);
+export default function middleware(request) {
+  if (process.env.NEXT_PUBLIC_ENV === "staging") {
+    const secret = process.env.STAGING_ACCESS_SECRET;
+    const pathname = request.nextUrl.pathname;
 
-function isStagingRequest(request) {
-  return process.env.NEXT_PUBLIC_ENV === "staging";
-}
+    if (secret && !isStagingAccessRoute(pathname)) {
+      const headerToken = request.headers.get("x-staging-access");
+      const cookieToken = request.cookies.get("staging_access")?.value;
 
-function hasStagingAccess(request) {
-  const secret = process.env.STAGING_ACCESS_SECRET;
-  if (!secret) {
-    return false;
-  }
-
-  const headerToken = request.headers.get("x-staging-access");
-  const cookieToken = request.cookies.get("staging_access")?.value;
-  return headerToken === secret || cookieToken === secret;
-}
-
-export default clerkMiddleware(async (auth, request) => {
-  if (isStagingRequest(request) && !isStagingAccessRoute(request)) {
-    if (!hasStagingAccess(request)) {
-      return NextResponse.redirect(new URL("/staging-access", request.url));
+      if (headerToken !== secret && cookieToken !== secret) {
+        return NextResponse.redirect(new URL("/staging-access", request.url));
+      }
     }
   }
 
-  if (!isProtectedRoute(request)) return;
-
-  await auth.protect();
-
-  // Additional role-based protection for admin routes
-  if (request.nextUrl.pathname.startsWith("/admin")) {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.redirect(new URL("/sign-in", request.url));
-    }
-  }
-});
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: [
