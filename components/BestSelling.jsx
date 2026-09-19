@@ -21,7 +21,7 @@ const BestSelling = () => {
       <div className="mt-12 grid grid-cols-2 sm:flex flex-wrap gap-6 xl:gap-12">
         {products
           .slice()
-          .sort((a, b) => b.rating.length - a.rating.length)
+          .sort((a, b) => (b.rating?.length ?? 0) - (a.rating?.length ?? 0))
           .slice(0, displayQuantity)
           .map((product, index) => (
             <ScrollReveal
