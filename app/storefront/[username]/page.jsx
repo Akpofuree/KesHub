@@ -125,7 +125,7 @@ export default async function PublicStorePage({ params }) {
                     </h3>
                     <div className="mt-3 flex items-center justify-between">
                       <span className="text-sm font-bold text-slate-900">
-                        {process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "$"}
+                        {process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "₦"}
                         {product.price.toLocaleString()}
                       </span>
                       <ArrowRight size={16} className="text-emerald-600" />

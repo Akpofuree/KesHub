@@ -15,6 +15,7 @@ async function safeJson(response) {
 }
 
 export default function StoreOrders() {
+    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '₦'
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(true)
     const [selectedOrder, setSelectedOrder] = useState(null)
@@ -99,7 +100,7 @@ export default function StoreOrders() {
                                         {index + 1}
                                     </td>
                                     <td className="px-4 py-3">{order.user?.name}</td>
-                                    <td className="px-4 py-3 font-medium text-slate-800">${order.totalAmount}</td>
+                                    <td className="px-4 py-3 font-medium text-slate-800">{currency}{order.totalAmount}</td>
                                     <td className="px-4 py-3">{order.paymentMethod}</td>
                                     <td className="px-4 py-3">
                                         {order.isCouponUsed ? (
@@ -163,7 +164,7 @@ export default function StoreOrders() {
                                         <div className="flex-1">
                                             <p className="text-slate-800">{item.product?.name}</p>
                                             <p>Qty: {item.quantity}</p>
-                                            <p>Price: ${item.price}</p>
+                                            <p>Price: {currency}{item.price}</p>
                                         </div>
                                     </div>
                                 ))}

@@ -18,7 +18,7 @@ async function safeJson(response) {
 
 export default function StoreManageProducts() {
 
-    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$'
+    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '₦'
 
     const [loading, setLoading] = useState(true)
     const [products, setProducts] = useState([])

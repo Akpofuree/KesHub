@@ -40,7 +40,7 @@ export default async function AdminDashboard() {
     );
   }
 
-  const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "?";
+  const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "₦";
 
   const [total, outOfStock, featured, recent] = await Promise.all([
     prisma.product.count(),

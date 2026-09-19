@@ -9,7 +9,7 @@ import { fetchJson } from "@/lib/fetch-json"
 
 export default function Dashboard() {
 
-    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$'
+    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '₦'
 
     const router = useRouter()
 

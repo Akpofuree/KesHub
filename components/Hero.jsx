@@ -8,7 +8,7 @@ import ScrollReveal from "./ScrollReveal";
 import CategoriesMarquee from "./CategoriesMarquee";
 
 const Hero = () => {
-  const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "$";
+  const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "₦";
 
   const scrollToBestSelling = () => {
     const bestSellingSection = document.getElementById("bestselling");
@@ -32,7 +32,7 @@ const Hero = () => {
                 <span className="bg-emerald-600 px-3 py-1 rounded-full text-white text-xs mr-2">
                   NEWS
                 </span>
-                <span suppressHydrationWarning>Free Shipping on Orders Above $50!</span>
+                <span suppressHydrationWarning>Free Shipping on Orders Above ₦50,000!</span>
                 <ChevronRightIcon
                   className="group-hover:ml-2 transition-all"
                   size={16}

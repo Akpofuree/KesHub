@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@clerk/nextjs';
 
 const OrderSummary = ({ totalPrice, items }) => {
-    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$';
+    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '₦';
 
     const router = useRouter();
     const { isLoaded, isSignedIn } = useAuth();
