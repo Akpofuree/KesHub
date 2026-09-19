@@ -2,7 +2,7 @@
 
 **Go For Kes** 🟢
 
-KESHUB is a full-stack e-commerce storefront for buying secondhand and brand-new phones, laptops, headphones, and gadgets. Built for the Nigerian market, it features category-specific product grading (UK Used, Grade A/B/C, Box Ton), SIM lock status for phones, detailed specs for laptops, and a WhatsApp-first checkout flow that matches how most sales actually close in Nigeria.
+KESHUB is a full-stack e-commerce storefront for buying secondhand and brand-new phones, laptops, headphones, and gadgets. Built for the Nigerian market, it features category-specific product grading (UK Used, Grade A/B/C, Box Ton), SIM lock status for phones, detailed specs for laptops, and a Paystack checkout flow for secure online payments.
 
 The platform has two sides: a public shop where customers browse, filter, and order products, and an admin dashboard where the store owner can add, edit, and delete inventory in real time — no code required.
 
@@ -17,7 +17,8 @@ The platform has two sides: a public shop where customers browse, filter, and or
 - **Admin dashboard** — add, edit, and delete products with image upload, stock tracking, and featured product flags
 - **Smart shop page** — category quick-links, condition/price/brand filters, all driven by live database data (no placeholder products)
 - **Cart & wishlist** — session-based, no account required to shop
-- **WhatsApp ordering** — one-tap checkout that opens a pre-filled WhatsApp message with product and price
+- **Checkout & payments** — authenticated customers select a delivery address, create an order, and pay securely through Paystack
+- **Payment verification** — server-side Paystack transaction verification and webhook handling update paid orders safely
 - **Authentication** — secure admin login via Clerk
 - **Mobile-first design** — built for customers who browse and buy primarily on their phones
 
@@ -77,14 +78,23 @@ CLERK_SECRET_KEY="your-clerk-secret-key"
 CLOUDINARY_CLOUD_NAME="your-cloud-name"
 CLOUDINARY_API_KEY="your-api-key"
 CLOUDINARY_API_SECRET="your-api-secret"
+
+# Paystack
+PAYSTACK_SECRET_KEY="your-paystack-secret-key"
+NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY="your-paystack-public-key"
+
+# Public application URL used for Paystack callbacks
+NEXT_PUBLIC_APP_URL="https://your-domain.com"
 ```
 
 ### 4. Set up the database
 
 ```bash
-npx prisma migrate dev --name init
+npx prisma migrate deploy
 npx prisma generate
 ```
+
+For local schema development, use `npx prisma migrate dev` instead.
 
 ### 5. Run the development server
 

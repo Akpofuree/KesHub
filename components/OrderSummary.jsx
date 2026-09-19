@@ -102,14 +102,8 @@ const OrderSummary = ({ totalPrice, items }) => {
     return (
         <div className='w-full max-w-lg lg:max-w-[340px] bg-slate-50/30 border border-slate-200 text-slate-500 text-sm rounded-xl p-7'>
             <h2 className='text-xl font-medium text-slate-600'>Payment Summary</h2>
-            <p className='text-slate-400 text-xs my-4'>Payment Method</p>
-            <div className='flex gap-2 items-center'>
-                <input type="radio" id="COD" name="payment" className='accent-gray-500' defaultChecked />
-                <label htmlFor="COD" className='cursor-pointer'>COD</label>
-            </div>
-            <div className='flex gap-2 items-center mt-1'>
-                <input type="radio" id="PAYSTACK" name='payment' className='accent-gray-500' />
-                <label htmlFor="PAYSTACK" className='cursor-pointer'>Paystack Payment</label>
+            <div className='my-4 rounded border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800'>
+                Payment method: Paystack
             </div>
             <div className='my-4 py-4 border-y border-slate-200 text-slate-400'>
                 <p>Address</p>

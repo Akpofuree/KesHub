@@ -119,17 +119,20 @@ model Product {
 }
 
 model Order {
-  id            String      @id @default(cuid())
-  userId        String?
-  customerName  String
-  customerEmail String
-  customerPhone String
-  address       String
-  totalAmount   Float
-  status        OrderStatus @default(PENDING)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  orderItems    OrderItem[]
+  id                String      @id @default(cuid())
+  userId            String?
+  customerName      String
+  customerEmail     String
+  customerPhone     String
+  address           String
+  totalAmount       Float
+  status            OrderStatus @default(PENDING)
+  isPaid            Boolean     @default(false)
+  paymentMethod     String      @default("PAYSTACK")
+  paystackReference String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  orderItems        OrderItem[]
 
   user          User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
 
